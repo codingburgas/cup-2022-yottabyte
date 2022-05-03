@@ -1,4 +1,5 @@
 ﻿@page "/superheroes"
+@attribute [Authorize]
 @inject ISuperHeroService SuperHeroService
 @inject NavigationManager NavigationManager
 @implements IDisposable
@@ -23,18 +24,18 @@ else
         <tbody>
             @foreach (var hero in SuperHeroService.Heroes)
             {
-            <tr>
-                <td>@hero.FirstName</td>
-                <td>@hero.LastName</td>
-                <td>@hero.HeroName</td>
-                <td>@hero.Comic.Name</td>
-                <td>
-                    <button class="btn btn-primary" @onclick="(() => showHero(hero.Id))">Show</button>
-                </td>
-                <td>
-                    <button class="btn btn-danger" @onclick="(() => deleteHero(hero.Id))">Delete</button>
-                </td>
-            </tr>
+                <tr>
+                    <td>@hero.FirstName</td>
+                    <td>@hero.LastName</td>
+                    <td>@hero.HeroName</td>
+                    <td>@hero.Comic.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => showHero(hero.Id))">Show</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="(() => deleteHero(hero.Id))">Delete</button>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -43,7 +44,7 @@ else
 
 <EditSuperHero></EditSuperHero>
 
-@code {    
+@code {
     protected override async Task OnInitializedAsync()
     {
         await SuperHeroService.GetSuperHeroes();

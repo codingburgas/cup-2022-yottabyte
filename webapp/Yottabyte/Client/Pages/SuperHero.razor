@@ -1,0 +1,26 @@
+﻿@page "/superhero/{id:int}"
+@inject ISuperHeroService SuperHeroService
+
+@if (hero == null)
+{
+    <span>Hero is loading...</span>
+}
+else
+{
+    <h3>This is @hero.HeroName, also called @hero.FirstName @hero.LastName.</h3>
+    //<span>This hero belongs to @hero.GetComic()</span>
+    <EditSuperHero Hero="@hero"></EditSuperHero>
+}
+
+
+@code {
+    Yottabyte.Shared.SuperHero hero = new Yottabyte.Shared.SuperHero();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hero = await SuperHeroService.GetSuperHeroes(Id);
+    }
+}

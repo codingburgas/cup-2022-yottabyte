@@ -1,0 +1,77 @@
+﻿@inject ISuperHeroService SuperHeroService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+@if(Hero.Id == 0)
+{
+    <h3>Create a new Hero</h3>
+}
+else
+{
+    <h3>Edit @Hero.HeroName</h3>
+}
+
+<EditForm Model="Hero" OnSubmit="HandleSubmit">
+    <div class="form-group">
+        <label>First Name:</label>
+        <InputText @bind-Value="Hero.FirstName" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Last Name:</label>
+        <InputText @bind-Value="Hero.LastName" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Hero Name:</label>
+        <InputText @bind-Value="Hero.HeroName" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Comic:</label><br />
+        <InputRadioGroup @bind-Value="comicId" class="form-control">
+            @foreach (var commic in SuperHeroService.Comics)
+            {
+                <InputRadio Value="@commic.Id"/><span style="padding-left: 5px">@commic.Name</span><br />
+            }
+        </InputRadioGroup>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    [ParameterAttribute]
+    public Yottabyte.Shared.SuperHero Hero { get; set; } = new Yottabyte.Shared.SuperHero();
+
+    int comicId = 1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await SuperHeroService.GetComics();
+
+        // Please ingore this
+        try
+        {
+            comicId = Hero.Comic.Id;
+            await JSRuntime.InvokeVoidAsync("console.log", Hero);
+        }
+        catch(Exception e)
+        {
+
+        }
+    }
+
+    async void HandleSubmit()
+    {
+        Hero.Comic = SuperHeroService.Comics.FirstOrDefault(c => c.Id == comicId);
+
+        await JSRuntime.InvokeVoidAsync("console.log", Hero);
+
+        if (Hero.Id == 0)
+        {
+            await SuperHeroService.CreateSuperHeroes(Hero);
+        }
+        else
+        {
+            await SuperHeroService.UpdateSuperHeroes(Hero, Hero.Id);
+            NavigationManager.NavigateTo("superheroes");
+        }
+    }
+}

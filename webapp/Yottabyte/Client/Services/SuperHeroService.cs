@@ -12,10 +12,12 @@ namespace Yottabyte.Client.Services
     public class SuperHeroService : ISuperHeroService
     {
         private readonly HttpClient _httpClient;
+        private readonly HttpClient _Auth0httpClient;
 
-        public SuperHeroService(HttpClient httpClient)
+        public SuperHeroService(IHttpClientFactory clientFac)
         {
-            _httpClient = httpClient;
+            _httpClient = clientFac.CreateClient("ServerAPI");
+            _Auth0httpClient = clientFac.CreateClient("Auth0API");
         }
 
         public List<Comic> Comics { get; set; } = new List<Comic>();
@@ -63,6 +65,13 @@ namespace Yottabyte.Client.Services
         {
             Heroes = await _httpClient.GetFromJsonAsync<List<SuperHero>>("api/superhero");
             return Heroes;
+        }
+
+        public async Task<string> GetUsername(string id)
+        {
+            //var result = await _Auth0httpClient.GetFromJsonAsync<JsonContent>($"api/v2/users/{id}");
+
+            return "Asd";// result.ToString();
         }
 
         public async Task<List<SuperHero>> UpdateSuperHeroes(SuperHero hero, int id)

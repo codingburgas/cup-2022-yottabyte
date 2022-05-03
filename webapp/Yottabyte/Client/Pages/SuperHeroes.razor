@@ -19,6 +19,7 @@ else
                 <th>Last Name</th>
                 <th>Hero Name</th>
                 <th>Comic</th>
+                <th>Last Edited by</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,7 @@ else
                     <td>@hero.LastName</td>
                     <td>@hero.HeroName</td>
                     <td>@hero.Comic.Name</td>
+                    <td>@getUsername(@hero.EditorId).Result</td>
                     <td>
                         <button class="btn btn-primary" @onclick="(() => showHero(hero.Id))">Show</button>
                     </td>
@@ -64,5 +66,10 @@ else
     public void Dispose()
     {
         SuperHeroService.OnChange -= StateHasChanged;
+    }
+
+    async Task<string> getUsername(string id)
+    {
+        return await SuperHeroService.GetUsername(id);
     }
 }

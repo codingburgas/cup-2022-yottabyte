@@ -11,7 +11,7 @@ namespace Yottabyte.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class SuperHeroController : ControllerBase
     {
         static List<Comic> comics = new List<Comic> {
@@ -20,8 +20,23 @@ namespace Yottabyte.Server.Controllers
         };
 
         static List<SuperHero> heroes = new List<SuperHero> {
-            new SuperHero { Id = 1, FirstName = "Peter", LastName = "Parker", HeroName = "Spiderman", Comic = comics[0] },
-            new SuperHero { Id = 2, FirstName = "Bruce", LastName = "Waynce", HeroName = "Batman", Comic = comics[1] } 
+            new SuperHero { 
+                Id = 1,
+                FirstName = "Peter",
+                LastName = "Parker",
+                HeroName = "Spiderman",
+                Comic = comics[0],
+                EditorId = "auth0|627171d97157bd006ec9f6f8"
+            },
+            new SuperHero 
+            { 
+                Id = 2,
+                FirstName = "Bruce", 
+                LastName = "Waynce", 
+                HeroName = "Batman",
+                Comic = comics[1],
+                EditorId = "auth0|627171d97157bd006ec9f6f8"
+            }
         };
 
         [HttpGet]

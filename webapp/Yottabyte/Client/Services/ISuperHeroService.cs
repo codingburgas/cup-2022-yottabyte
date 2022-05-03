@@ -17,5 +17,6 @@ namespace Yottabyte.Client.Services
         Task<List<SuperHero>> CreateSuperHeroes(SuperHero hero);
         Task<List<SuperHero>> UpdateSuperHeroes(SuperHero hero, int id);
         Task<List<SuperHero>> DeleteSuperHeroes(int id);
+        Task<string> GetUsername(string id);
     }
 }

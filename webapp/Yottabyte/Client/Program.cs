@@ -8,6 +8,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Yottabyte.Client.Services;
+using Havit.Blazor.Components.Web;
+using Havit.Blazor.Components.Web.Bootstrap;
 
 namespace Yottabyte.Client
 {
@@ -21,6 +23,8 @@ namespace Yottabyte.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
+
+            builder.Services.AddHxServices();
 
             await builder.Build().RunAsync();
         }

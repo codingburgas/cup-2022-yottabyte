@@ -40,6 +40,7 @@ export function Map() {
       }
     })();
   }, []);
+  console.log((Dimensions.get("screen").height - Dimensions.get("window").height));
 
   return (
     <View style={styles.container}>
@@ -74,6 +75,6 @@ const styles = StyleSheet.create({
 
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    height: Dimensions.get("screen").height - (Dimensions.get("screen").height - Dimensions.get("window").height) - 112,
   },
 });

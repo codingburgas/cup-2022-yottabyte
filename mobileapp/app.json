@@ -1,10 +1,32 @@
 {
   "expo": {
-    "name": "mobileapp",
-    "slug": "mobileapp",
+    "name": "Yottabyte",
+    "slug": "Yottabyte",
     "version": "1.0.0",
+    "orientation": "portrait",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "com.yottabyte.android",
+      "permissions": [
+        "ACCESS_BACKGROUND_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "FOREGROUND_SERVICE",
+        "INTERNET",
+        "VIBRATE",
+        "SYSTEM_ALERT_WINDOW",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyABZeHcYnq96i0zF8GSkXoFLr3IaoV0HPo"
+        }
+      }
+    },
+    "description": ""
   }
 }

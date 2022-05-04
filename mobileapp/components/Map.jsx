@@ -40,7 +40,6 @@ export function Map() {
       }
     })();
   }, []);
-  console.log((Dimensions.get("screen").height - Dimensions.get("window").height));
 
   return (
     <View style={styles.container}>

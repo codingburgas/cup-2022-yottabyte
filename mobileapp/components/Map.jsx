@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, SafeAreaView, Dimensions, Alert } from "react-native";
+import { StyleSheet, View, Dimensions, Alert } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 
 export function Map() {
   const [location, setLocation] = useState(null);
+  const [userLocationLat, setUserLocationLat] = useState(0);
+  const [userLocationLong, setUserLocationLong] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -23,19 +25,24 @@ export function Map() {
         );
       }
 
-      while (true) {
-        const location = await Location.getLastKnownPositionAsync({
-          accuracy: 6,
-          distanceInterval: 1,
-          timeInterval: 1000,
-        });
-        setLocation(location);
+      const location = await Location.getLastKnownPositionAsync({
+        accuracy: 6,
+        distanceInterval: 1,
+        timeInterval: 1000,
+      });
+      setLocation(location);
+      if (location == null && userLocationLat != -80) {
+        setUserLocationLat(-80);
+        setUserLocationLong(-176);
+      } else if (userLocationLat != location.coords.latitude) {
+        setUserLocationLat(location.coords.latitude);
+        setUserLocationLong(location.coords.longitude);
       }
     })();
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <MapView
         style={styles.map}
         mapType="satellite"
@@ -53,7 +60,7 @@ export function Map() {
           longitudeDelta: 0.0421,
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

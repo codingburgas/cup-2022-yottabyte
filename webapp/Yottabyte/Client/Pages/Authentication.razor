@@ -8,10 +8,13 @@
 <RemoteAuthenticatorView Action="@Action">
     <LogOut>
         @{
+            // Delete JWT Token from the local storage
+            /*
             var authority = (string)Configuration["Auth0:Authority"];
             var clientId = (string)Configuration["Auth0:ClientId"];
 
             Navigation.NavigateTo($"{authority}/v2/logout?client_id={clientId}");
+            */
         }
     </LogOut>
 </RemoteAuthenticatorView>

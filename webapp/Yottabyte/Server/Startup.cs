@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using Yottabyte.Server.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yottabyte.Server
 {
@@ -23,6 +25,8 @@ namespace Yottabyte.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataContext>(options=>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

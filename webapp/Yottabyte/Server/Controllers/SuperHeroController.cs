@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Yottabyte.Server.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yottabyte.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class SuperHeroController : ControllerBase
     {
         static List<Comic> comics = new List<Comic> {
@@ -38,23 +40,36 @@ namespace Yottabyte.Server.Controllers
                 EditorId = "auth0|627171d97157bd006ec9f6f8"
             }
         };
+        private readonly DataContext _context;
+
+        public SuperHeroController(DataContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetSuperHero()
         {
-            return Ok(heroes);
+            return base.Ok(await GetDbHeroes());
+        }
+
+        private async Task<List<SuperHero>> GetDbHeroes()
+        {
+            return await _context.SuperHeroes.Include(sh => sh.Comic).ToListAsync();
         }
 
         [HttpGet("comics")]
         public async Task<IActionResult> GetComic()
         {
-            return Ok(comics);
+            return Ok(await _context.Comics.ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingleSuperHero(int id)
         {
-            var hero = heroes.FirstOrDefault(h => h.Id == id);
+            var hero = await _context.SuperHeroes
+                .Include(sh => sh.Comic)
+                .FirstOrDefaultAsync(h => h.Id == id);
 
             if (hero == null)
             {
@@ -67,41 +82,49 @@ namespace Yottabyte.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSuperHero(SuperHero hero)
         {
-            hero.Id = heroes.Max(h => h.Id + 1);
-            heroes.Add(hero);
-
-            return Ok(heroes);
+            _context.SuperHeroes.Add(hero);
+            await _context.SaveChangesAsync();
+            
+            return Ok(await GetDbHeroes());
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSuperHero(SuperHero hero, int id)
         {
-            var updateHero = heroes.FirstOrDefault(h => h.Id == id);
+            var updateHero = await _context.SuperHeroes
+                .Include(sh => sh.Comic)
+                .FirstOrDefaultAsync(h=> h.Id == id);
 
             if (updateHero == null)
             {
                 return NotFound("Super Hero wasn't found. Sad qsha. :(");
             }
 
-            var index = heroes.IndexOf(updateHero);
-            heroes[index] = hero;
+            updateHero.FirstName = hero.FirstName;
+            updateHero.LastName = hero.LastName;
+            updateHero.HeroName = hero.HeroName;
+            updateHero.ComicId = hero.ComicId;
 
-            return Ok(heroes);
+            await _context.SaveChangesAsync();
+
+            return Ok(await GetDbHeroes());
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSuperHero(int id)
         {
-            var hero = heroes.FirstOrDefault(h => h.Id == id);
+            var deleteHero = await _context.SuperHeroes
+                .Include(sh => sh.Comic)
+                .FirstOrDefaultAsync(h => h.Id == id);
 
-            if (hero == null)
+            if (deleteHero == null)
             {
                 return NotFound("Super Hero wasn't found. Sad qsha. :(");
             }
+            _context.SuperHeroes.Remove(deleteHero);
+            await _context.SaveChangesAsync();
 
-            heroes.Remove(hero);
-
-            return Ok(heroes);
+            return Ok(await GetDbHeroes());
         }
     }
 }

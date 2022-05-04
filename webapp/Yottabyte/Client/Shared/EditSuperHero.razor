@@ -49,7 +49,7 @@ else
         // Please ingore this
         try
         {
-            comicId = Hero.Comic.Id;
+            comicId = Hero.ComicId;
             await JSRuntime.InvokeVoidAsync("console.log", Hero);
         }
         catch(Exception e)
@@ -60,7 +60,8 @@ else
 
     async void HandleSubmit()
     {
-        Hero.Comic = SuperHeroService.Comics.FirstOrDefault(c => c.Id == comicId);
+        Hero.Comic = null;
+        Hero.ComicId = comicId;
 
         await JSRuntime.InvokeVoidAsync("console.log", Hero);
 

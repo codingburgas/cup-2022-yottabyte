@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yottabyte.Server.Data;
 using Yottabyte.Shared;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -73,15 +75,55 @@ namespace Yottabyte.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
+        // POST: api/users/register
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> RegisterUser([FromForm] User user)
         {
+            // Validations
+
+            // Check for duplicate email
+            bool doesUserExist = await _context.User
+                .FirstOrDefaultAsync(u => u.Email == user.Email) != null;
+
+            if (doesUserExist)
+            {
+                return Conflict("There is already a user with this email!");
+            }
+
+            user.Role = ROLES.USER;
+
+            // If user doesn't upload avatar
+            if (user.AvatarURL == null)
+            {
+                // Generate custom avatar
+                string avatarSeed = (DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds.ToString();
+                user.AvatarURL = "https://avatars.dicebear.com/api/identicon/" + avatarSeed + ".svg";
+            }
+
+            // Generate salt
+            byte[] salt = new byte[128 / 8];
+            using (var rngCsp = new RNGCryptoServiceProvider())
+            {
+                rngCsp.GetNonZeroBytes(salt);
+            }
+
+            // Hash password
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: user.PasswordHash,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8
+            ));
+
+            user.PasswordHash = hashed;
+            user.Salt = Convert.ToBase64String(salt);
+
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return Ok("user-register-success");
         }
 
         // DELETE: api/Users/5

@@ -46,6 +46,6 @@ namespace Yottabyte.Server.Data
 
         public DbSet<Comic> Comics { get; set; }
 
-        public DbSet<Yottabyte.Shared.User> User { get; set; }
+        public DbSet<User> User { get; set; }
     }
 }

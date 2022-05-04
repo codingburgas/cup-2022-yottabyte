@@ -14,5 +14,6 @@ namespace Yottabyte.Shared
         public string HeroName { get; set; }
         public string EditorId { get; set; }
         public Comic Comic { get; set; }
+        public int ComicId { get; set; }
     }
 }

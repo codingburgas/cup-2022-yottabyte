@@ -38,12 +38,12 @@ namespace Yottabyte.Client
             builder.Services.AddTransient<Auth0AuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient("ServerAPI",
-                client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+                client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            //.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient("Auth0API",
-                client => client.BaseAddress = new Uri("https://yottabyte-test.eu.auth0.com/"))
-                .AddHttpMessageHandler<Auth0AuthorizationMessageHandler>();
+                client => client.BaseAddress = new Uri("https://yottabyte-test.eu.auth0.com/"));
+                //.AddHttpMessageHandler<Auth0AuthorizationMessageHandler>();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

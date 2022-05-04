@@ -9,8 +9,8 @@ using Yottabyte.Server.Data;
 namespace Yottabyte.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220504093325_Add user class")]
-    partial class Adduserclass
+    [Migration("20220504120210_Add not null to user class")]
+    partial class Addnotnulltouserclass
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,24 +104,30 @@ namespace Yottabyte.Server.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AvatarURL")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("Salt")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

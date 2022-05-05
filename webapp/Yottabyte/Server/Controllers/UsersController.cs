@@ -67,7 +67,7 @@ namespace Yottabyte.Server.Controllers
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, [FromForm] UserIM userIM)
+        public async Task<ActionResult<Response>> PutUser(int id, [FromForm] UserIM userIM)
         {
             var token = await HttpContext.GetTokenAsync("access_token");
             var claims = ExtractClaims(token);
@@ -77,11 +77,16 @@ namespace Yottabyte.Server.Controllers
 
             if (reqUserId != id && !isReqUserAdmin)
             {
-                return Unauthorized("The user isn't an admin");
+                return Unauthorized(new Response { Type = "user-update-failure", Data = "The user isn't an admin" });
             }
 
             User user = await _context.User
                 .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound(new Response { Type = "user-update-failure", Data = " Ther is not a user with this id" });
+            }
 
             user.FName = userIM.FName;
             user.LName = userIM.LName;
@@ -95,7 +100,7 @@ namespace Yottabyte.Server.Controllers
 
                 if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
                 {
-                    return BadRequest("The file extension of avatar image is invalid");
+                    return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of avatar image is invalid" });
                 }
 
                 var connectionString = (string)_configuration["AzureStorage:ConnectionString"];
@@ -154,7 +159,7 @@ namespace Yottabyte.Server.Controllers
             {
                 if (!UserExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new Response { Type = "user-update-failure", Data = " Ther is not a user with this id" });
                 }
                 else
                 {
@@ -162,13 +167,13 @@ namespace Yottabyte.Server.Controllers
                 }
             }
 
-            return Ok("user-update-succsess");
+            return Ok(new Response { Type = "user-update-succsess" });
         }
 
         // POST: api/users/register
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> RegisterUser([FromForm] UserIM userIM)
+        public async Task<ActionResult<Response>> RegisterUser([FromForm] UserIM userIM)
         {
             // Convert the input model to normal model
             User user = IMToUser(userIM);
@@ -179,7 +184,7 @@ namespace Yottabyte.Server.Controllers
 
             if (doesUserExist)
             {
-                return Conflict("There is already a user with this email!");
+                return Conflict(new Response { Type = "user-register-failure", Data = "There is already a user with this email" });
             }
 
             user.Role = ROLES.USER;
@@ -187,7 +192,6 @@ namespace Yottabyte.Server.Controllers
             // If user doesn't upload avatar
             if (userIM.Avatar == null)
             {
-
                 // Generate custom avatar
                 string avatarSeed = (DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds.ToString();
                 user.AvatarURL = "https://avatars.dicebear.com/api/identicon/" + avatarSeed + ".svg";
@@ -200,7 +204,7 @@ namespace Yottabyte.Server.Controllers
 
                 if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
                 {
-                    return BadRequest("The file extension of avatar image is invalid");
+                    return BadRequest(new Response { Type = "user-register-failure", Data = "The file extension of avatar image is invalid" });
                 }
 
                 var connectionString = (string)_configuration["AzureStorage:ConnectionString"];
@@ -242,13 +246,13 @@ namespace Yottabyte.Server.Controllers
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok("user-register-success");
+            return Ok(new Response { Type = "user-register-success"});
         }
 
         // POST: api/users/login
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> LoginUser([FromForm] string Email, [FromForm] string Password)
+        public async Task<ActionResult<Response>> LoginUser([FromForm] string Email, [FromForm] string Password)
         {
             User user = await _context.User
                 .FirstOrDefaultAsync(u => u.Email == Email);
@@ -257,7 +261,7 @@ namespace Yottabyte.Server.Controllers
 
             if (!doesUserExist)
             {
-                return BadRequest("There isn't a user with this email!");
+                return BadRequest(new Response { Type = "user-login-failure", Data = "There isn't a user with this email!" });
             }
 
             // Hash password
@@ -287,17 +291,17 @@ namespace Yottabyte.Server.Controllers
 
                 var token = tokenHandler.CreateToken(tokenDescriptor);
 
-                return Ok(tokenHandler.WriteToken(token));
+                return Ok(new Response { Type = "user-login-success", Data = tokenHandler.WriteToken(token) });
             }
             else
             {
-                return BadRequest("The password is incorrect!");
+                return BadRequest(new Response { Type = "user-login-failure", Data = "The password is incorrect!" });
             }
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<ActionResult<Response>> DeleteUser(int id)
         {
             var token = await HttpContext.GetTokenAsync("access_token");
             var claims = ExtractClaims(token);
@@ -307,13 +311,13 @@ namespace Yottabyte.Server.Controllers
 
             if (reqUserId != id && !isReqUserAdmin)
             {
-                return Unauthorized("The user isn't an admin");
+                return Unauthorized(new Response { Type = "user-deletion-failure", Data = "The user isn't an admin" });
             }
 
             var user = await _context.User.FindAsync(id);
             if (user == null)
             {
-                return NotFound("There isn't a user with this id");
+                return NotFound(new Response { Type = "user-deletion-failure", Data = "There isn't a user with this id" });
             }
 
             if (!user.AvatarURL.StartsWith("https://avatars.dicebear.com/"))
@@ -337,7 +341,7 @@ namespace Yottabyte.Server.Controllers
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
 
-            return Ok("user-deletion-success");
+            return Ok(new Response { Type = "user-deletion-success" });
         }
 
         private bool UserExists(int id)

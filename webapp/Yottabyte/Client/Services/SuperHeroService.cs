@@ -23,6 +23,8 @@ namespace Yottabyte.Client.Services
         public List<Comic> Comics { get; set; } = new List<Comic>();
         public List<SuperHero> Heroes { get; set; } = new List<SuperHero>();
 
+
+
         public event Action OnChange;
 
         public async Task<List<SuperHero>> CreateSuperHeroes(SuperHero hero)

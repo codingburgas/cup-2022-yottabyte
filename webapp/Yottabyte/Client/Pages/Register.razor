@@ -1,0 +1,38 @@
+﻿@page "/register"
+@inject IUsersServices UserServices
+
+<h3>Register</h3>
+
+<EditForm Model="User" OnSubmit="HandleSubmit">
+    <div class="form-group">
+        <label>First Name:</label>
+        <InputText @bind-Value="User.FName" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Last Name:</label>
+        <InputText @bind-Value="User.LName" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Email:</label>
+        <InputText @bind-Value="User.Email" class="form-control" type="email"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Password:</label>
+        <InputText @bind-Value="User.Password" class="form-control" type="password"></InputText>
+    </div> 
+    <div class="form-group">
+        <label>Avatar:</label>
+        <InputFile @bind-Value="User.Avatar" class="form-control" type="file"></InputFile>
+    </div> 
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+
+@code {
+    public Yottabyte.Shared.UserIM User { get; set; } = new Yottabyte.Shared.UserIM();
+
+    async void HandleSubmit()
+    {
+        await UserServices.CreateUser(User);
+    }
+}

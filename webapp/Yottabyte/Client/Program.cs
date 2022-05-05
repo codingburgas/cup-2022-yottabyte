@@ -28,6 +28,7 @@ namespace Yottabyte.Client
             .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
+            builder.Services.AddScoped<IUsersServices, UserServices>();
 
             builder.Services.AddHxServices();
 

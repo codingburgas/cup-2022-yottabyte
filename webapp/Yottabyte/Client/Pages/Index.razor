@@ -1,25 +1,87 @@
 ﻿@page "/"
 
 <style>
-    .e-corner {
-        border-radius: 10px;
+
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+
+    *, html{
+        margin: 0px;
+        padding: 0px;
     }
+
+    .main-heading {
+        font-family: 'Inter', sans-serif;
+        max-width: 80%;
+        font-weight: 600;
+        font-size: 4em;
+    }
+
+    #ai-text {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: url('img/3.png');
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .main-container {
+        -ms-box-orient: horizontal;
+        display: -ms-flexbox;
+        display: -moz-flex;
+        display: -webkit-flex;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-direction: row;
+        top:10%;
+        left:10%;
+        position: absolute;
+    }
+
+    .main-container > * {
+        flex-basis: 100%;
+    }
+
+    .background-container {
+        right: 0;
+        top: 0;
+        left:0;
+        display:flex;
+        flex-direction: row-reverse;
+    }
+
+    .background-container > img{
+        width: 519px;
+    }
+
+    button {
+        background: rgb(97,179,255);
+        background: linear-gradient(90deg, rgba(97,179,255,1) 0%, rgba(131,33,255,1) 100%);
+        border-radius: 50px;
+        border: none;
+        width: 300px;
+        height: 70px;
+        color: white;
+        font-size: 2em;
+        margin-top:5%;
+        font-weight: 900;
+    }
+    
 </style>
 
-    <HxNavbar CssClass="e-corner">
-        <HxNavbarBrand><b>Team Yottabyte</b></HxNavbarBrand>
-        <HxNavbarToggler />
-        <HxNavbarCollapse>
-            <HxNav CssClass="me-auto mb-2 mb-lg-0">
-                <HxNavLink Href="/components/HxNavbar">Home</HxNavLink>
-                <HxNavLink Href="#">About App</HxNavLink>
-                <HxNavLink Href="#">Download</HxNavLink>
-            </HxNav>
-            <HxNav>
+<div class="background-container">
+    <img src="img/gradient.png" asp-append-version="true"/>
+</div>
 
-                <HxButton style="margin-right: 3%;" Text="Login" Color="ThemeColor.Primary" />
-                <HxButton Text="Register" Color="ThemeColor.Success" />
-            </HxNav>
+<div class="main-container">
 
-        </HxNavbarCollapse>
-    </HxNavbar>
+    <div>
+        <h1 class="main-heading">Save your future through the power of <span id="ai-text">AI</span>.</h1>
+        <button type="button">Start now <span><img src="img/vector-arrow.svg" asp-append-version="true" width="20" /></span></button>
+    </div>
+
+    <div>
+        <img src="img/da.png" asp-append-version="true" width="400"/>
+    </div>
+</div>

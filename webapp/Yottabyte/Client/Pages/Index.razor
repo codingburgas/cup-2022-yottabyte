@@ -16,22 +16,36 @@
         </div>
 
         <div id="right-wrapper">
-
+            <img class="side-gradient" src="img/side-gradient.png"/>
         </div>
     </div>
-
 </section>
+
+<section class="parent-functionality">
+    <p class="func-tba">Functionality Screen (200vh)</p>
+</section>
+
+<section class="parent-social">
+    <p class="social-tba">Social Screen (100vh)</p>
+</section>
+
+<section class="parent-register">
+    <p class="register-tba">Register Screen (50vh)</p>
+</section>
+
 
 <style>
 
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap');
 
-    * {
+    *, html {
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow-x: hidden;
     }
+
+    /*===================== FIRST SCREEN =====================*/
 
     .parent-main {
         background-color: #FAFBFF;
@@ -51,15 +65,28 @@
 
     #left-wrapper {
         width: inherit;
-        background-color: antiquewhite;
+        margin: auto;
+        align-items: center;
+        justify-content: center;
+        margin-left: 5vw;
+    }
+
+    #right-wrapper {
+        width: inherit;
         margin: auto;
         align-items: center;
         justify-content: center;
     }
 
-    #right-wrapper {
-        width: inherit;
-        background-color: lightcyan;
+    .side-gradient {
+        display: block;
+        margin-left: auto;
+        margin-right: 0;
+        height: 100vh;
+    }
+
+    .heading-main::selection{
+        background: #6564D4;
     }
 
     .heading-main > h1 {
@@ -100,6 +127,43 @@
         display: inline;
         padding-left: 1vw;
         width: 50px;
+    }
+
+    /*===================== SECOND SCREEN =====================*/
+    
+    .parent-functionality {
+        width: 100vw;
+        height: 200vh;
+        background-color: lightcoral;
+    }
+
+    .func-tba {
+        text-align: center;
+        font-size: 10rem;
+    }
+    /*===================== THIRD SCREEN =====================*/
+
+    .parent-social {
+        width: 100vw;
+        height: 100vh;
+        background-color: lightgreen;
+    }
+
+    .social-tba {
+        text-align: center;
+        font-size: 10rem;
+    }
+
+     /*===================== FOURTH SCREEN =====================*/
+
+     .parent-register {
+         width: 100vw;
+         height: 50vh;
+     }
+
+    .register-tba {
+        text-align: center;
+        font-size: 10rem;
     }
 
 </style>

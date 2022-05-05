@@ -9,6 +9,6 @@ namespace Yottabyte.Client.Services
     interface IUsersServices
     {
         event Action OnChange;
-        Task<List<UserIM>> CreateUser(UserIM user);
+        Task<String> CreateUser(UserIM user);
     }
 }

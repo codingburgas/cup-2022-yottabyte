@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using System.Text.Json;
+using System.Net.Http.Headers;
 
 namespace Yottabyte.Client.Services
 {
@@ -18,27 +20,32 @@ namespace Yottabyte.Client.Services
             _httpClient = clientFac.CreateClient("ServerAPI");
         }
 
-        public List<UserIM> UsersIM { get; set; } = new List<UserIM>();
-
         public event Action OnChange;
 
-        public async Task<List<UserIM>> CreateUser(UserIM user)
+        public async Task<String> CreateUser(UserIM user)
         {
-            var result = await _httpClient.PostAsJsonAsync($"api/users/register", user);
+            var formContent = new MultipartFormDataContent
+            {
+                { new StringContent(user.FName), "\"FName\"" },
+                { new StringContent(user.LName), "\"LName\"" },
+                { new StringContent(user.Email), "\"Email\"" },
+                { new StringContent(user.Password), "\"Password\"" },
+            };
+
+            var result = await _httpClient.PostAsync($"api/users/register", formContent);
+
             Response res;
 
-            if(result.IsSuccessStatusCode)
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                res = await result.Content.ReadFromJsonAsync<Response>();
-                UsersIM = await result.Content.ReadFromJsonAsync<List<UserIM>>();
-            } 
+                OnChange.Invoke();
+                return "Users is successfully registered! You can now loggin in our App!";
+            }
 
-            //res.Type = "fail";
+            res = await result.Content.ReadFromJsonAsync<Response>();
 
             OnChange.Invoke();
-            return UsersIM;
-
-            //throw new NotImplementedException();
+            return res.Data;
         }
     }
 }

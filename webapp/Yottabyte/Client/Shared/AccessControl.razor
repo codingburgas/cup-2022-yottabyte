@@ -5,6 +5,7 @@
 @inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
+    @*
     <Authorized>
         Hello, @context.User.Identity.Name!
         <a href="#" @onclick="BeginSignOut">Log out</a>
@@ -12,6 +13,7 @@
     <NotAuthorized>
         <a href="authentication/login">Log in</a>
     </NotAuthorized>
+    *@
 </AuthorizeView>
 
 @code{

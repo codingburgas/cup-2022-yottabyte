@@ -1,87 +1,105 @@
 ﻿@page "/"
 
+<section class="parent-main">
+    <div class="landing-container">
+        <div id="left-wrapper">
+            <div class="heading-main">
+                <h1>Save your future through the power of <span class="ai-text">AI</span>.</h1>
+            </div>
+
+            <button class="start-now-button">
+                Start now
+                <svg class="button-arrow-svg" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="right-wrapper">
+
+        </div>
+    </div>
+
+</section>
+
 <style>
 
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap');
 
-    *, html{
-        margin: 0px;
-        padding: 0px;
+    * {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }
 
-    .main-heading {
-        font-family: 'Inter', sans-serif;
-        max-width: 80%;
-        font-weight: 600;
-        font-size: 4em;
+    .parent-main {
+        background-color: #FAFBFF;
+        height: 100vh;
+        width: 100vw;
+        background-image: url('img/lines.svg');
+        background-repeat: no-repeat;
+        background-size: 105vw;
     }
 
-    #ai-text {
+    .landing-container {
+        width: inherit;
+        height: inherit;
+        display: flex;
+        flex-direction: row;
+    }
+
+    #left-wrapper {
+        width: inherit;
+        background-color: antiquewhite;
+        margin: auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #right-wrapper {
+        width: inherit;
+        background-color: lightcyan;
+    }
+
+    .heading-main > h1 {
+        width: 40vw;
+        color: #001854;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 96px;
+        line-height: 116px;
+    }
+
+    .ai-text {
+        display: inline;
         background-clip: text;
         -webkit-background-clip: text;
         color: transparent;
-        background-image: url('img/3.png');
+        background-image: url('img/ai-gradient.png');
         background-repeat: no-repeat;
         background-position: center;
     }
 
-    .main-container {
-        -ms-box-orient: horizontal;
-        display: -ms-flexbox;
-        display: -moz-flex;
-        display: -webkit-flex;
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        flex-direction: row;
-        top:10%;
-        left:10%;
-        position: absolute;
-    }
-
-    .main-container > * {
-        flex-basis: 100%;
-    }
-
-    .background-container {
-        right: 0;
-        top: 0;
-        left:0;
-        display:flex;
-        flex-direction: row-reverse;
-    }
-
-    .background-container > img{
-        width: 519px;
-    }
-
-    button {
-        background: rgb(97,179,255);
-        background: linear-gradient(90deg, rgba(97,179,255,1) 0%, rgba(131,33,255,1) 100%);
-        border-radius: 50px;
+    .start-now-button {
+        height: 11.5vh;
+        width: 22vw;
+        margin-top: 5vh;
+        background: linear-gradient(92.45deg, #61B3FF -3.98%, #8321FF 112.43%);
         border: none;
-        width: 300px;
-        height: 70px;
-        color: white;
-        font-size: 2em;
-        margin-top:5%;
-        font-weight: 900;
+        border-radius: 93px;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 800;
+        font-size: 2.7rem;
+        color: #FFFFFF;
     }
-    
+
+    .button-arrow-svg {
+        display: inline;
+        padding-left: 1vw;
+        width: 50px;
+    }
+
 </style>
-
-<div class="background-container">
-    <img src="img/gradient.png" asp-append-version="true"/>
-</div>
-
-<div class="main-container">
-
-    <div>
-        <h1 class="main-heading">Save your future through the power of <span id="ai-text">AI</span>.</h1>
-        <button type="button">Start now <span><img src="img/vector-arrow.svg" asp-append-version="true" width="20" /></span></button>
-    </div>
-
-    <div>
-        <img src="img/da.png" asp-append-version="true" width="400"/>
-    </div>
-</div>

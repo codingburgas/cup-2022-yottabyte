@@ -1,0 +1,54 @@
+﻿@page "/register"
+@inject IUsersServices UserServices
+@inject IJSRuntime js
+
+<h3>Register</h3>
+
+<EditForm Model="User" OnSubmit="HandleSubmit">
+    <div class="form-group">
+        <label>First Name:</label>
+        <InputText @bind-Value="User.FName" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Last Name:</label>
+        <InputText @bind-Value="User.LName" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Email:</label>
+        <InputText @bind-Value="User.Email" class="form-control" type="email" required></InputText>
+    </div>
+    <div class="form-group">
+        <label>Password:</label>
+        <InputText @bind-Value="User.Password" class="form-control" type="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}"></InputText>
+    </div> 
+    @*
+        
+    <div class="form-group">
+        <label>Avatar:</label>
+        <InputFile @bind-Value="User.Avatar" class="form-control" type="file" accept=".jpg, .jpeg, png"></InputFile>
+    </div> 
+    *@
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <p>@recordSet</p>
+</EditForm>
+
+
+@code {
+    public string recordSet = "";
+    public Yottabyte.Shared.UserIM User { get; set; } = new Yottabyte.Shared.UserIM();
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserServices.OnChange += StateHasChanged;
+    }
+
+
+    async void HandleSubmit()
+    {
+        await js.InvokeVoidAsync("console.log", User);
+        recordSet = await UserServices.CreateUser(User);
+        Console.WriteLine(recordSet);
+        UserServices.OnChange += StateHasChanged;
+        StateHasChanged();
+    }
+}

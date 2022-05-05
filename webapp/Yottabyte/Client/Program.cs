@@ -23,11 +23,16 @@ namespace Yottabyte.Client
 
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddHttpClient("ServerAPI",
+            builder.Services.AddHttpClient("AuthServerAPI",
                 client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
             .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
+            builder.Services.AddHttpClient("ServerAPI",
+                client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+           // .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
             builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
+            builder.Services.AddScoped<IUsersServices, UserServices>();
 
             builder.Services.AddHxServices();
 

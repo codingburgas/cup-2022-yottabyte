@@ -1,14 +1,6 @@
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-            <Authorizing>
-                <p>Determining session state, please wait...</p>
-            </Authorizing>
-            <NotAuthorized>
-                <h1>Sorry</h1>
-                <p>You're not authorized to reach this page. You need to log in.</p>
-            </NotAuthorized>
-        </AuthorizeRouteView>
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">

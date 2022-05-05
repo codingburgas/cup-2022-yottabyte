@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:DefaultConnection"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "AzureStorage:ConnectionString"
+    }
+  }
+}

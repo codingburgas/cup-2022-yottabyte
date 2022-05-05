@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace Yottabyte.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EventsController : ControllerBase
     {
         private readonly DataContext _context;
@@ -21,8 +23,29 @@ namespace Yottabyte.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Events
+        // GET: api/events/auth
+        [HttpGet("auth")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetAuthEvent()
+        {
+            return await _context.Event.ToListAsync();
+        }
+
+        // GET: api/events/auth/5
+        [HttpGet("auth/{id}")]
+        public async Task<ActionResult<Event>> GetAuthEvent(int id)
+        {
+            var @event = await _context.Event.FindAsync(id);
+
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            return @event;
+        }
+
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvent()
         {
             return await _context.Event.ToListAsync();
@@ -30,6 +53,7 @@ namespace Yottabyte.Server.Controllers
 
         // GET: api/Events/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Event>> GetEvent(int id)
         {
             var @event = await _context.Event.FindAsync(id);
@@ -42,6 +66,7 @@ namespace Yottabyte.Server.Controllers
             return @event;
         }
 
+        /*
         // PUT: api/Events/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -72,7 +97,8 @@ namespace Yottabyte.Server.Controllers
 
             return NoContent();
         }
-
+         */
+        /*
         // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -83,7 +109,9 @@ namespace Yottabyte.Server.Controllers
 
             return CreatedAtAction("GetEvent", new { id = @event.Id }, @event);
         }
+         */
 
+        /*
         // DELETE: api/Events/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvent(int id)
@@ -99,6 +127,7 @@ namespace Yottabyte.Server.Controllers
 
             return NoContent();
         }
+         * */
 
         private bool EventExists(int id)
         {

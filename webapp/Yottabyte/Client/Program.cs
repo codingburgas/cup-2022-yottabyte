@@ -12,6 +12,7 @@ using Havit.Blazor.Components.Web;
 using Havit.Blazor.Components.Web.Bootstrap;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Tewr.Blazor.FileReader;
 
 namespace Yottabyte.Client
 {
@@ -33,14 +34,12 @@ namespace Yottabyte.Client
 
             builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
             builder.Services.AddScoped<IUsersServices, UserServices>();
+            
+            builder.Services.AddFileReaderService(options => {
+                options.UseWasmSharedBuffer = true;
+            });
 
             builder.Services.AddHxServices();
-
-            builder.Services.AddOidcAuthentication(options =>
-            {
-                builder.Configuration.Bind("Auth0", options.ProviderOptions);
-                options.ProviderOptions.ResponseType = "code";
-            });
 
             await builder.Build().RunAsync();
         }

@@ -8,6 +8,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Text.Json;
 using System.Net.Http.Headers;
+using System.IO;
 
 namespace Yottabyte.Client.Services
 {
@@ -22,7 +23,7 @@ namespace Yottabyte.Client.Services
 
         public event Action OnChange;
 
-        public async Task<String> CreateUser(UserIM user)
+        public async Task<String> CreateUser(UserIM user, Stream avatarStream, string filename)
         {
             var formContent = new MultipartFormDataContent
             {
@@ -31,6 +32,12 @@ namespace Yottabyte.Client.Services
                 { new StringContent(user.Email), "\"Email\"" },
                 { new StringContent(user.Password), "\"Password\"" },
             };
+
+            if (avatarStream != null)
+            {
+                Console.WriteLine("Qsha4");
+                formContent.Add(new StreamContent(avatarStream, (int)avatarStream.Length), "\"Avatar\"", filename);
+            }
 
             var result = await _httpClient.PostAsync($"api/users/register", formContent);
 

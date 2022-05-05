@@ -5,7 +5,6 @@ import * as Location from "expo-location";
 import { Navigation } from "./Navigation";
 
 export function Map() {
-  // const navigation = React.useContext(NavigatorContext);
   const [location, setLocation] = useState(null);
   const [userLocationLat, setUserLocationLat] = useState(0);
   const [userLocationLong, setUserLocationLong] = useState(0);

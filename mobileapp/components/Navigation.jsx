@@ -6,18 +6,19 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import Svg, { Path, Circle } from "react-native-svg";
+import { NavigatorContext } from "./NavigatorContext";
+import { EventComponent } from "./EventSearch";
+// import { useNavigation } from '@react-navigation/native';
 
 export function Navigation() {
+  // const navigation = useNavigation();
+  const navigation = React.useContext(NavigatorContext);
+
   return (
     <View style={styles.navigation}>
       <View style={styles.activeDot}>
-        <Svg
-          width={6}
-          height={7}
-        >
+        <Svg width={6} height={7}>
           <Circle cx={2.959} cy={3.53} r={2.827} fill="#245BF5" />
         </Svg>
       </View>
@@ -37,7 +38,7 @@ export function Navigation() {
       <TouchableOpacity
         style={styles.searchIcon}
         title="Map"
-        // onPress={() => navigation.navigate("Map")}
+        onPress={() => navigation.navigate("EventComponent")}
       >
         <Svg width={45} height={44}>
           <Path
@@ -114,5 +115,5 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "16.20%",
     bottom: "35.3%",
-  }
+  },
 });

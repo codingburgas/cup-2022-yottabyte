@@ -8,11 +8,19 @@ import {
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path, Circle } from "react-native-svg";
 
 export function Navigation() {
   return (
     <View style={styles.navigation}>
+      <View style={styles.activeDot}>
+        <Svg
+          width={6}
+          height={7}
+        >
+          <Circle cx={2.959} cy={3.53} r={2.827} fill="#245BF5" />
+        </Svg>
+      </View>
       <TouchableOpacity
         style={styles.mapIcon}
         title="Map"
@@ -44,10 +52,7 @@ export function Navigation() {
         title="Map"
         // onPress={() => navigation.navigate("Map")}
       >
-        <Svg
-          width={37}
-          height={48}
-        >
+        <Svg width={37} height={48}>
           <Path
             d="M18.625 47.06c1.638 0 3.078.255 3.858-.404.843-.713-.278-1.837-1.383-1.837h-4.95c-1.105 0-2.226 1.124-1.383 1.837.78.66 2.22.404 3.858.404Zm17.901-12.485V20.809c0-7.277-6.957-12.634-13.085-14.773-.853-.297-1.46-1.08-1.46-1.983v-.211C21.981 1.716 20.482 0 18.625 0c-1.857 0-3.357 1.716-3.357 3.842v.213c0 .902-.606 1.684-1.457 1.982C7.698 8.173.724 13.509.724 20.809V40.258a2 2 0 0 0 2 2h31.802a2 2 0 0 0 2-2v-5.683Zm-4.475.56a2 2 0 0 1-2 2H7.199a2 2 0 0 1-2-2V20.81c0-6.352 7.854-10.565 13.426-10.565S32.05 14.457 32.05 20.81v14.327Z"
             fill="#B2B1B6"
@@ -84,21 +89,30 @@ const styles = StyleSheet.create({
   mapIcon: {
     position: "absolute",
     left: "12.85%",
+    bottom: "60.3%",
   },
 
   searchIcon: {
     position: "absolute",
     left: "33.1%",
+    bottom: "60.3%",
   },
 
   notificationIcon: {
     position: "absolute",
     left: "55.78%",
+    bottom: "60.3%",
   },
 
   accountIcon: {
     position: "absolute",
     left: "78.46%",
-    borderRadius: 1,
+    bottom: "60.3%",
   },
+
+  activeDot: {
+    position: "absolute",
+    left: "16.20%",
+    bottom: "35.3%",
+  }
 });

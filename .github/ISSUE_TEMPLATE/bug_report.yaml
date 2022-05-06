@@ -1,7 +1,7 @@
 name: 🐞 Bug
 description: File a bug/issue
 title: "[BUG] <title>"
-labels: [Bug, Needs Triage]
+labels: [Bug]
 body:
 - type: checkboxes
   attributes:
@@ -10,6 +10,14 @@ body:
     options:
     - label: I have searched the existing issues
       required: true
+- type: input
+  id: prevalence
+  attributes:
+    label: Bug prevalence
+    description: "How often do you or others encounter this bug?"
+    placeholder: "Whenever I visit the user account page (1-2 times a week)"
+  validations:
+    required: true
 - type: textarea
   attributes:
     label: Current Behavior

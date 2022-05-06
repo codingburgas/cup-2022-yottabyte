@@ -186,7 +186,7 @@ namespace Yottabyte.Server.Controllers
             @event.ImageURL = blockBlobClient.Uri.AbsoluteUri;
 
             // Get the geolocation
-            var am = new AzureMapsToolkit.AzureMapsServices("O8PAaNMOEy-Pv9ZG5UjuaC8Z7_yQuLkP9b7AJS3w_Es");
+            var am = new AzureMapsToolkit.AzureMapsServices(_configuration["AzureMaps:Key"]);
 
             var searchReverseRequest = new SearchAddressReverseRequest
             {

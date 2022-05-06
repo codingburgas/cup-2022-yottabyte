@@ -3,6 +3,8 @@
 <section class="parent-main">
     <div class="landing-container">
         <div id="left-wrapper">
+            <div class="logo-container"></div>
+
             <div class="heading-main">
                 <h1>Save your future through the power of <span class="ai-text">AI</span>.</h1>
             </div>
@@ -17,6 +19,7 @@
 
         <div id="right-wrapper">
             <img class="side-gradient" src="img/side-gradient.png"/>
+            <img class="mockup-devices" src="img/mockup.png" />
         </div>
     </div>
 </section>
@@ -36,9 +39,11 @@
 
 <style>
 
+    /*===================== IMPORTS =====================*/
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap');
 
+    /* Margin reset */
     *, html {
         margin: 0;
         padding: 0;
@@ -47,6 +52,7 @@
 
     /*===================== FIRST SCREEN =====================*/
 
+    /* Section Styling*/
     .parent-main {
         background-color: #FAFBFF;
         height: 100vh;
@@ -56,49 +62,49 @@
         background-size: 105vw;
     }
 
+    /* Screen being devided with flexbox */
     .landing-container {
+        position: relative;
         width: inherit;
         height: inherit;
         display: flex;
         flex-direction: row;
     }
 
+    /* Left half of the Landing Screen - logo, heading, ai-text & button */
     #left-wrapper {
         width: inherit;
         margin: auto;
         align-items: center;
         justify-content: center;
-        margin-left: 5vw;
+        margin-left: 9vw;
+        margin-top: 25vh;
+        overflow: hidden;
     }
 
-    #right-wrapper {
-        width: inherit;
-        margin: auto;
-        align-items: center;
-        justify-content: center;
+    /* Styling for the logo container */
+    .logo-container {
+        height: 5vh;
+        width: 10vw;
+        background-color: dimgray;
     }
 
-    .side-gradient {
-        display: block;
-        margin-left: auto;
-        margin-right: 0;
-        height: 100vh;
+    /* General pushback for the heading container */
+    .heading-main {
+        margin-top: 5vh;
     }
 
-    .heading-main::selection{
-        background: #6564D4;
-    }
-
+    /* Nested styling for the h1 tag */
     .heading-main > h1 {
         width: 40vw;
         color: #001854;
         font-family: 'Inter';
         font-style: normal;
         font-weight: 700;
-        font-size: 96px;
-        line-height: 116px;
+        font-size: 6em;
     }
 
+    /* Styling & BG Clip for the gradient text */
     .ai-text {
         display: inline;
         background-clip: text;
@@ -109,6 +115,7 @@
         background-position: center;
     }
 
+    /* Call to action button */
     .start-now-button {
         height: 11.5vh;
         width: 22vw;
@@ -123,11 +130,46 @@
         color: #FFFFFF;
     }
 
+    /* Button icon */
     .button-arrow-svg {
         display: inline;
         padding-left: 1vw;
-        width: 50px;
+        width: 2vw;
     }
+
+    /* Right half of the Landing Screen - side gradient & mockups */
+    #right-wrapper {
+        width: inherit;
+        margin: auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Styling for the side gradient */
+    .side-gradient {
+        display: block;
+        margin-left: auto;
+        margin-right: 0;
+        width: 26vw;
+        height: 100vh;
+        /* 
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 26vw;
+            z-index: 0;
+        */
+    }
+
+    /* Styling for the mockups */
+    .mockup-devices {
+        position: absolute;
+        margin-left: 6vw;
+        top: 10%;
+        z-index: 1;
+    }
+
 
     /*===================== SECOND SCREEN =====================*/
     

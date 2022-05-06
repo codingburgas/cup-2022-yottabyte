@@ -10,7 +10,7 @@ using Yottabyte.Shared;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Configuration;
-using Azure.Storage;
+using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using System.IO;
 using Azure.Storage.Blobs.Specialized;
@@ -30,6 +30,13 @@ namespace Yottabyte.Server.Controllers
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
+        public readonly Dictionary<string, string> fileExtToConType = new Dictionary<string, string>
+            {
+                { ".png", "image/x-png" },
+                { ".jpg", "image/jpeg" },
+                { ".svg", "image/svg+xml" },
+                { ".gif", "image/gif" }
+            };
 
         public UsersController(DataContext context, IConfiguration configuration)
         {
@@ -94,7 +101,7 @@ namespace Yottabyte.Server.Controllers
 
             if (userIM.Avatar != null)
             {
-                string[] permittedExtensions = { ".png", ".jpg", ".gif", ".svg" };
+                string[] permittedExtensions = { ".png", ".jpg" };
 
                 var ext = Path.GetExtension(userIM.Avatar.FileName).ToLowerInvariant();
 
@@ -105,7 +112,7 @@ namespace Yottabyte.Server.Controllers
 
                 var connectionString = (string)_configuration["AzureStorage:ConnectionString"];
 
-                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+                BlobServiceClient blobServiceClient = new(connectionString);
 
                 string containerName = "yottabyteavatarimagestest";
 
@@ -123,8 +130,16 @@ namespace Yottabyte.Server.Controllers
                     await blockBlobClient.DeleteAsync();
                 }
 
-                blockBlobClient = containerClient.GetBlockBlobClient(Path.GetRandomFileName() + Guid.NewGuid().ToString() + Path.GetExtension(userIM.Avatar.FileName).ToLowerInvariant());
-                await blockBlobClient.UploadAsync(userIM.Avatar.OpenReadStream());
+                blockBlobClient = containerClient.GetBlockBlobClient(
+                    Path.GetRandomFileName() + Guid.NewGuid().ToString() + Path.GetExtension(userIM.Avatar.FileName).ToLowerInvariant()
+                );
+
+                var blobHttpHeader = new BlobHttpHeaders { ContentType = fileExtToConType[Path.GetExtension(userIM.Avatar.FileName).ToLowerInvariant()] };
+
+                await blockBlobClient.UploadAsync(
+                    userIM.Avatar.OpenReadStream(),
+                    new BlobUploadOptions { HttpHeaders = blobHttpHeader }
+                );
 
                 user.AvatarURL = blockBlobClient.Uri.AbsoluteUri;
             }
@@ -209,7 +224,7 @@ namespace Yottabyte.Server.Controllers
 
                 var connectionString = (string)_configuration["AzureStorage:ConnectionString"];
 
-                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+                BlobServiceClient blobServiceClient = new(connectionString);
 
                 string containerName = "yottabyteavatarimagestest";
 
@@ -219,7 +234,13 @@ namespace Yottabyte.Server.Controllers
                 containerClient.CreateIfNotExists();
 
                 BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(Path.GetRandomFileName() + Guid.NewGuid().ToString() + Path.GetExtension(userIM.Avatar.FileName).ToLowerInvariant());
-                await blockBlobClient.UploadAsync(userIM.Avatar.OpenReadStream());
+
+                var blobHttpHeader = new BlobHttpHeaders { ContentType = fileExtToConType[Path.GetExtension(userIM.Avatar.FileName).ToLowerInvariant()] };
+
+                await blockBlobClient.UploadAsync(
+                    userIM.Avatar.OpenReadStream(),
+                    new BlobUploadOptions { HttpHeaders = blobHttpHeader }
+                );
 
                 user.AvatarURL = blockBlobClient.Uri.AbsoluteUri;
             }

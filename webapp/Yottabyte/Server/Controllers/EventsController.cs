@@ -1,13 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Yottabyte.Server.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction;
 using Yottabyte.Shared;
+using Yottabyte.Server.Data;
+using Microsoft.Extensions.Configuration;
+using AzureMapsToolkit.Search;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Blobs.Models;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -17,10 +26,20 @@ namespace Yottabyte.Server.Controllers
     public class EventsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public EventsController(DataContext context)
+        public readonly Dictionary<string, string> fileExtToConType = new Dictionary<string, string>
+            {
+                { ".png", "image/x-png" },
+                { ".jpg", "image/jpeg" },
+                { ".svg", "image/svg+xml" },
+                { ".gif", "image/gif" }
+            };
+
+        public EventsController(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/events/auth
@@ -98,18 +117,111 @@ namespace Yottabyte.Server.Controllers
             return NoContent();
         }
          */
-        /*
-        // POST: api/Events
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Event>> PostEvent(Event @event)
+        // POST: api/events/createnewevent
+        [HttpPost("createNewEvent")]
+        public async Task<ActionResult<Response>> PostEvent([FromForm] EventIM eventIm)
         {
+            Event @event = IMToEvent(eventIm);
+
+            bool doesUserExist = await _context.Event
+                .FirstOrDefaultAsync(e => e.Long == @event.Long && e.Lat == @event.Lat && e.StartTime > new DateTime()) != null;
+
+            if (doesUserExist)
+            {
+                return Conflict(new Response { Type = "event-create-failure", Data = "There is already event in this place and it is active" });
+            }
+
+            string[] permittedExtensions = { ".png", ".jpg" };
+
+            var ext = Path.GetExtension(eventIm.Image.FileName).ToLowerInvariant();
+
+            if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+            {
+                return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of avatar image is invalid" });
+            }
+
+            // Send the image to the Azure Custom Vision API Endpoint            
+            CustomVisionPredictionClient predictionApi = AuthenticatePrediction(
+                _configuration["AzureCustomVision:PredictionEndpoint"],
+                _configuration["AzureCustomVision:PredictionKey"]);
+
+            var result = predictionApi.ClassifyImageAsync(
+                Guid.Parse(_configuration["AzureCustomVision:PredictionModeId"]),
+                _configuration["AzureCustomVision:PredictionModeId"],
+                eventIm.Image.OpenReadStream());
+
+            double unclearProb = result.Result.Predictions[0].Probability;
+            double clearProb = result.Result.Predictions[1].Probability;
+
+            if (unclearProb <= clearProb)
+            {
+                return BadRequest(new Response { Type = "event-create-failure", Data = "The area is clear!" });
+            }
+
+            // Save the image to Azure Blob
+            var connectionString = _configuration["AzureStorage:ConnectionString"];
+
+            BlobServiceClient blobServiceClient = new(connectionString);
+
+            string containerName = "yottabyteeventimagestest";
+
+            BlobContainerClient containerClient;
+
+            containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            containerClient.CreateIfNotExists();
+
+            BlockBlobClient blockBlobClient;
+
+            blockBlobClient = containerClient.GetBlockBlobClient(
+                Path.GetRandomFileName() + Guid.NewGuid().ToString() + Path.GetExtension(eventIm.Image.FileName).ToLowerInvariant()
+            );
+
+            var blobHttpHeader = new BlobHttpHeaders { ContentType = fileExtToConType[Path.GetExtension(eventIm.Image.FileName).ToLowerInvariant()] };
+
+            await blockBlobClient.UploadAsync(
+                eventIm.Image.OpenReadStream(),
+                new BlobUploadOptions { HttpHeaders = blobHttpHeader }
+            );
+
+            @event.ImageURL = blockBlobClient.Uri.AbsoluteUri;
+
+            // Get the geolocation
+            var am = new AzureMapsToolkit.AzureMapsServices("O8PAaNMOEy-Pv9ZG5UjuaC8Z7_yQuLkP9b7AJS3w_Es");
+
+            var searchReverseRequest = new SearchAddressReverseRequest
+            {
+                Query = @event.Long.ToString() + "," + @event.Lat.ToString()
+            };
+
+            var resp = am.GetSearchAddressReverse(searchReverseRequest).Result;
+            
+            if (resp.Error != null)
+            {
+                return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting reverse geolocation! Please try again!" });
+            }
+
+            var address = resp.Result.Addresses[0].Address;
+            string location;
+
+            if (address.StreetName != null)
+            {
+                location = $"{address.Country}, {address.Municipality}, {address.StreetName}";
+            }
+            else
+            {
+                location = $"{address.Country}, {address.Municipality}, Beach";
+            }
+
+            @event.Location = location;
+
+            // Determin the date of the event
+            @event.StartTime = new DateTime().AddDays(1);
+
             _context.Event.Add(@event);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetEvent", new { id = @event.Id }, @event);
         }
-         */
 
         /*
         // DELETE: api/Events/5
@@ -132,6 +244,23 @@ namespace Yottabyte.Server.Controllers
         private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.Id == id);
+        }
+
+        private static Event IMToEvent(EventIM eventIM) =>
+          new()
+          {
+              Long = eventIM.Long,
+              Lat = eventIM.Lat
+          };
+
+        private static CustomVisionPredictionClient AuthenticatePrediction(string endpoint, string predictionKey)
+        {
+            // Create a prediction endpoint, passing in the obtained prediction key
+            CustomVisionPredictionClient predictionApi = new(new ApiKeyServiceClientCredentials(predictionKey))
+            {
+                Endpoint = endpoint
+            };
+            return predictionApi;
         }
     }
 }

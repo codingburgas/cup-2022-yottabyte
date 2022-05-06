@@ -46,8 +46,8 @@ namespace Yottabyte.Server.Data
                 {
                     Id = 1,
                     Location = "Burgas, Seagarden, Salt Mines",
-                    Lat = 42.50345878261488,
-                    Long = 27.48397350311279,
+                    Lat = "42.50345878261488",
+                    Long = "27.48397350311279",
                     StartTime = new DateTime().AddDays(1),
                     ImageURL = "https://media.architecturaldigest.com/photos/5af4aed7da68792ef45e50a4/master/w_3865,h_2576,c_limit/16%20Nacpan.jpg"
                 });

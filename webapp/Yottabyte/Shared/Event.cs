@@ -17,10 +17,10 @@ namespace Yottabyte.Shared
         public string Location { get; set; }
 
         [Required]
-        public double Lat { get; set; }
+        public string Lat { get; set; }
 
         [Required]
-        public double Long { get; set; }
+        public string Long { get; set; }
 
         [Required]
         public DateTime StartTime { get; set; }
@@ -32,12 +32,12 @@ namespace Yottabyte.Shared
     public class EventIM
     {
         [Required]
-        [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
-        public double Lat { get; set; }
+        [RegularExpression(@"^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$")]
+        public string Lat { get; set; }
         
         [Required]
-        [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
-        public double Long { get; set; }
+        [RegularExpression(@"^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$")]
+        public string Long { get; set; }
 
         [Required]
         public IFormFile Image { get; set; }

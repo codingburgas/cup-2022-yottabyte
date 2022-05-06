@@ -14,9 +14,11 @@ using Yottabyte.Shared;
 using Yottabyte.Server.Data;
 using Microsoft.Extensions.Configuration;
 using AzureMapsToolkit.Search;
+using AzureMapsToolkit.Timezone;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Blobs.Models;
+using System.Globalization;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -124,7 +126,7 @@ namespace Yottabyte.Server.Controllers
             Event @event = IMToEvent(eventIm);
 
             bool doesUserExist = await _context.Event
-                .FirstOrDefaultAsync(e => e.Long == @event.Long && e.Lat == @event.Lat && e.StartTime > new DateTime()) != null;
+                .FirstOrDefaultAsync(e => e.Long == @event.Long && e.Lat == @event.Lat && e.StartTime.Date > DateTime.Now.Date) != null;
 
             if (doesUserExist)
             {
@@ -145,18 +147,94 @@ namespace Yottabyte.Server.Controllers
                 _configuration["AzureCustomVision:PredictionEndpoint"],
                 _configuration["AzureCustomVision:PredictionKey"]);
 
-            var result = predictionApi.ClassifyImageAsync(
+            var result = await predictionApi.ClassifyImageAsync(
                 Guid.Parse(_configuration["AzureCustomVision:PredictionModeId"]),
-                _configuration["AzureCustomVision:PredictionModeId"],
+                _configuration["AzureCustomVision:PredictionModelPublishedName"],
                 eventIm.Image.OpenReadStream());
 
-            double unclearProb = result.Result.Predictions[0].Probability;
-            double clearProb = result.Result.Predictions[1].Probability;
+
+            double unclearProb = result.Predictions[0].Probability;
+            double clearProb = result.Predictions[1].Probability;
 
             if (unclearProb <= clearProb)
             {
                 return BadRequest(new Response { Type = "event-create-failure", Data = "The area is clear!" });
             }
+
+            // Get the geolocation
+            var am = new AzureMapsToolkit.AzureMapsServices(_configuration["AzureMaps:Key"]);
+
+            Console.WriteLine(@event.Lat.ToString());
+            Console.WriteLine(@event.Long.ToString());
+
+            var searchReverseRequest = new SearchAddressReverseRequest
+            {
+                Query = @event.Lat.ToString() + "," + @event.Long.ToString(),
+                Language = "en_EN"
+            };
+
+            var resp = am.GetSearchAddressReverse(searchReverseRequest).Result;
+            
+            if (resp.Error != null)
+            {
+                return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting reverse geolocation! Please try again! " + resp.Error.Error.Message });
+            }
+
+            var address = resp.Result.Addresses[0].Address;
+            string location;
+
+            if (address.StreetName != null)
+            {
+                location = $"{address.Country}, {address.Municipality}, {address.StreetName}";
+            }
+            else
+            {
+                location = $"{address.Country}, {address.Municipality}, Beach";
+            }
+
+            @event.Location = location;;
+
+            var timezonRequest = new TimeZoneRequest
+            {
+                Query = @event.Lat.ToString() + "," + @event.Long.ToString()
+            };
+
+            var tzResp = am.GetTimezoneByCoordinates(timezonRequest).Result;
+
+            if (tzResp.Error != null)
+            {
+                return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting timezone! Please try again! " + resp.Error.Error.Message });
+            }
+
+            string timezone = tzResp.Result.TimeZones[0].Names.Standard;
+
+            // TODO: Add the other timezones
+            if (timezone == "Eastern European Standard Time")
+            {
+                timezone = "E. Europe Standard Time";
+            }
+
+            DateTime timeNow = DateTime.UtcNow;
+
+            var localDatetime = TimeZoneInfo.ConvertTimeFromUtc(timeNow,
+                TimeZoneInfo.FindSystemTimeZoneById(timezone));
+
+            if (localDatetime.DayOfWeek == DayOfWeek.Sunday)
+            {
+                // Skip to the next week
+                localDatetime = localDatetime.AddDays(6);
+            }
+            else
+            {
+                // Skip to the next week
+                localDatetime = localDatetime.AddDays(7);
+
+                @event.StartTime = localDatetime.AddDays(6 - (int)localDatetime.DayOfWeek);
+            }
+
+            TimeSpan ts = new(9, 0, 0);
+
+            @event.StartTime = @event.StartTime.Date + ts;
 
             // Save the image to Azure Blob
             var connectionString = _configuration["AzureStorage:ConnectionString"];
@@ -185,42 +263,10 @@ namespace Yottabyte.Server.Controllers
 
             @event.ImageURL = blockBlobClient.Uri.AbsoluteUri;
 
-            // Get the geolocation
-            var am = new AzureMapsToolkit.AzureMapsServices(_configuration["AzureMaps:Key"]);
-
-            var searchReverseRequest = new SearchAddressReverseRequest
-            {
-                Query = @event.Long.ToString() + "," + @event.Lat.ToString()
-            };
-
-            var resp = am.GetSearchAddressReverse(searchReverseRequest).Result;
-            
-            if (resp.Error != null)
-            {
-                return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting reverse geolocation! Please try again!" });
-            }
-
-            var address = resp.Result.Addresses[0].Address;
-            string location;
-
-            if (address.StreetName != null)
-            {
-                location = $"{address.Country}, {address.Municipality}, {address.StreetName}";
-            }
-            else
-            {
-                location = $"{address.Country}, {address.Municipality}, Beach";
-            }
-
-            @event.Location = location;
-
-            // Determin the date of the event
-            @event.StartTime = new DateTime().AddDays(1);
-
             _context.Event.Add(@event);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEvent", new { id = @event.Id }, @event);
+            return Ok(new Response { Type = "event-create-success" });
         }
 
         /*

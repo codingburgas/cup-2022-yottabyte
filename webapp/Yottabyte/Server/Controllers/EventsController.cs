@@ -19,6 +19,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Blobs.Models;
 using System.Globalization;
+using TimeZoneConverter;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -196,7 +197,8 @@ namespace Yottabyte.Server.Controllers
 
             var timezonRequest = new TimeZoneRequest
             {
-                Query = @event.Lat.ToString() + "," + @event.Long.ToString()
+                Query = @event.Lat.ToString() + "," + @event.Long.ToString(),
+                Options = TimezoneOptions.All
             };
 
             var tzResp = am.GetTimezoneByCoordinates(timezonRequest).Result;
@@ -206,13 +208,9 @@ namespace Yottabyte.Server.Controllers
                 return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting timezone! Please try again! " + resp.Error.Error.Message });
             }
 
-            string timezone = tzResp.Result.TimeZones[0].Names.Standard;
+            string timezoneIANAId = tzResp.Result.TimeZones[0].Id;
 
-            // TODO: Add the other timezones
-            if (timezone == "Eastern European Standard Time")
-            {
-                timezone = "E. Europe Standard Time";
-            }
+            string timezone = TZConvert.IanaToWindows(timezoneIANAId); 
 
             DateTime timeNow = DateTime.UtcNow;
 
@@ -235,6 +233,9 @@ namespace Yottabyte.Server.Controllers
             TimeSpan ts = new(9, 0, 0);
 
             @event.StartTime = @event.StartTime.Date + ts;
+
+            @event.StartTime = TimeZoneInfo.ConvertTimeToUtc(@event.StartTime,
+                TimeZoneInfo.FindSystemTimeZoneById(timezone));
 
             // Save the image to Azure Blob
             var connectionString = _configuration["AzureStorage:ConnectionString"];

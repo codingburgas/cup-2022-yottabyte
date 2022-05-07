@@ -12,8 +12,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import Svg, { Path, Circle } from "react-native-svg";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
 const API_ENDPOINT = SERVER_ENDPOINT + "/api";
@@ -27,8 +29,8 @@ function App() {
       <Stack.Navigator
         initialRouteName="Feed"
         screenOptions={{
-          tabBarActiveTintColor: "#e91e63",
-          tabBarStyle: { height: 112 },
+          tabBarActiveTintColor: "#6cc3ec",
+          tabBarStyle: { height: 102 },
         }}
       >
         <Stack.Screen
@@ -36,14 +38,12 @@ function App() {
           component={Map}
           options={{
             tabBarLabel: " ",
-            tabBarIcon: ({ color, size }) => (
-              <Image
-                style={{
-                  width: 35,
-                  height: 44,
-                }}
-                source={require("./assets/images/mapIconSelected.png")}
-              ></Image>
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="map-marker"
+                color={color}
+                size={55}
+              />
             ),
             headerShown: false,
           }}
@@ -53,14 +53,12 @@ function App() {
           component={Events}
           options={{
             tabBarLabel: " ",
-            tabBarIcon: ({ color, size }) => (
-              <Image
-                style={{
-                  width: 45,
-                  height: 45,
-                }}
-                source={require("./assets/images/searchIconSelected.png")}
-              ></Image>
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="format-list-bulleted"
+                color={color}
+                size={55}
+              />
             ),
             headerShown: false,
           }}
@@ -68,22 +66,44 @@ function App() {
         <Stack.Screen
           name="   "
           component={Notifications}
-          options={{ headerShown: false }}
+          options={{
+            tabBarLabel: " ",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="bell-outline"
+                color={color}
+                size={55}
+              />
+            ),
+            headerShown: false,
+          }}
         />
         <Stack.Screen
           name="    "
           component={User}
-          options={{ headerShown: false }}
+          options={{
+            tabBarLabel: " ",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="face-recognition"
+                color={color}
+                size={50}
+              />
+            ),
+            headerShown: false,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-function Map() {
+function Map({ navigation }) {
   const [location, setLocation] = useState(null);
   const [userLocationLat, setUserLocationLat] = useState(0);
   const [userLocationLong, setUserLocationLong] = useState(0);
+  let markerCoordsLat = 0;
+  let markerCoordsLong = 0;
 
   useEffect(() => {
     (async () => {
@@ -118,6 +138,20 @@ function Map() {
     })();
   }, []);
 
+  const [eventData, setEventData] = useState(null);
+  useEffect(() => {
+    const onEventsEnter = navigation.addListener("focus", () => {
+      console.log("fetch data for events");
+      fetchEvents().then((eventsDataJSON) => {
+        setEventData(eventsDataJSON);
+        // markerCoordsLat = eventData[0].lat;
+        // console.log(eventData[0].lat);
+        // markerCoordsLong = eventData[0].long;
+      });
+    });
+    return onEventsEnter;
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <MapView
@@ -136,19 +170,25 @@ function Map() {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-      />
+      >
+        {eventData != null &&(<Marker
+          coordinate={{
+            latitude: parseInt(eventData[1].lat),
+            longitude: parseInt(eventData[1].long),
+          }}
+        ></Marker>)}
+      </MapView>
     </View>
   );
 }
 
 function Events({ navigation }) {
   const [eventData, setEventData] = useState(null);
-  useEffect(()=>{
-    const onEventsEnter = navigation.addListener('focus', ()=>{
+  useEffect(() => {
+    const onEventsEnter = navigation.addListener("focus", () => {
       console.log("fetch data for events");
       fetchEvents().then((eventsDataJSON) => {
         setEventData(eventsDataJSON);
-        console.log(eventData);
       });
     });
     return onEventsEnter;
@@ -157,9 +197,9 @@ function Events({ navigation }) {
   return (
     <>
       <View style={styles.rectangle}></View>
+      {eventData != null && <Text>{JSON.stringify(eventData[0].lat)}</Text>}
     </>
   );
-
 }
 
 function Notifications() {
@@ -190,48 +230,36 @@ const styles = StyleSheet.create({
   eventContainer: {
     height: "128px",
     width: "128px",
-    backgroundColor: 'salmon',
-    position: 'absolute', 
+    backgroundColor: "salmon",
+    position: "absolute",
     zIndex: 99,
-    top: '0%',
-    left: '0%',
+    top: "0%",
+    left: "0%",
   },
 });
 
 function toURLEncoded(data) {
   return Object.keys(data)
-      .map(
-          (key) =>
-              encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
-      )
-      .join("&");
+    .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+    .join("&");
 }
 
-async function fetchAPI(
-  endpoint,
-  data = {},
-  headers = {},
-  method = "GET"
-) {
+async function fetchAPI(endpoint, data = {}, headers = {}, method = "GET") {
   let response = await fetch("https:" + API_ENDPOINT + endpoint, {
-      method,
-      mode: "cors",
-      headers: {
-          "Content-Type": "application/form-data",
-          ...headers,
-      },
-      body: method === "GET" ? null : toURLEncoded(data),
+    method,
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/form-data",
+      ...headers,
+    },
+    body: method === "GET" ? null : toURLEncoded(data),
   });
   return response.json();
 }
 
 async function fetchEvents(token) {
   return new Promise((res, rej) => {
-      fetchAPI(
-          "/events/"
-      )
-          .then(res)
-          .catch(rej);
+    fetchAPI("/events/").then(res).catch(rej);
   });
 }
 

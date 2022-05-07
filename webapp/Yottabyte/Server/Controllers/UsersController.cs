@@ -1,25 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Yottabyte.Server.Data;
-using Yottabyte.Shared;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.Extensions.Configuration;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs;
 using System.IO;
-using Azure.Storage.Blobs.Specialized;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Yottabyte.Shared;
+using Yottabyte.Server.Data;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -30,13 +30,13 @@ namespace Yottabyte.Server.Controllers
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
-        public readonly Dictionary<string, string> fileExtToConType = new Dictionary<string, string>
-            {
-                { ".png", "image/x-png" },
-                { ".jpg", "image/jpeg" },
-                { ".svg", "image/svg+xml" },
-                { ".gif", "image/gif" }
-            };
+        public readonly Dictionary<string, string> fileExtToConType = new()
+        {
+             { ".png", "image/x-png" },
+             { ".jpg", "image/jpeg" },
+             { ".svg", "image/svg+xml" },
+            { ".gif", "image/gif" }
+        };
 
         public UsersController(DataContext context, IConfiguration configuration)
         {
@@ -46,7 +46,6 @@ namespace Yottabyte.Server.Controllers
 
         // GET: api/users
         [HttpGet]
-        
         public async Task<ActionResult<IEnumerable<UserVM>>> GetUser()
         {
             List<UserVM> usersVM = new List<UserVM>();

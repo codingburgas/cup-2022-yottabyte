@@ -1,25 +1,29 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Linq;
-using System.Threading;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
+using Azure.Storage.Blobs;
+using AzureMapsToolkit.Search;
+using AzureMapsToolkit.Timezone;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction;
 using Yottabyte.Shared;
-using Yottabyte.Server.Data;
-using Microsoft.Extensions.Configuration;
-using AzureMapsToolkit.Search;
-using AzureMapsToolkit.Timezone;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Blobs.Models;
-using System.Globalization;
 using TimeZoneConverter;
+using Yottabyte.Server.Data;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -31,13 +35,13 @@ namespace Yottabyte.Server.Controllers
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
 
-        public readonly Dictionary<string, string> fileExtToConType = new Dictionary<string, string>
-            {
-                { ".png", "image/x-png" },
-                { ".jpg", "image/jpeg" },
-                { ".svg", "image/svg+xml" },
-                { ".gif", "image/gif" }
-            };
+        public readonly Dictionary<string, string> fileExtToConType = new()
+        {
+             { ".png", "image/x-png" },
+             { ".jpg", "image/jpeg" },
+             { ".svg", "image/svg+xml" },
+             { ".gif", "image/gif" }
+        };
 
         public EventsController(DataContext context, IConfiguration configuration)
         {
@@ -124,12 +128,22 @@ namespace Yottabyte.Server.Controllers
         [HttpPost("createNewEvent")]
         public async Task<ActionResult<Response>> PostEvent([FromForm] EventIM eventIm)
         {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var claims = ExtractClaims(token);
+
+            bool isReqUserAdmin = claims.ToArray()[1].Value == "True";
+            
+            if (!isReqUserAdmin)
+            {
+                return Unauthorized(new Response { Type = "event-create-failure", Data = "The user isn't an admin" });
+            }
+
             Event @event = IMToEvent(eventIm);
 
-            bool doesUserExist = await _context.Event
+            bool doesEventExist = await _context.Event
                 .FirstOrDefaultAsync(e => e.Long == @event.Long && e.Lat == @event.Lat && e.StartTime.Date > DateTime.Now.Date) != null;
 
-            if (doesUserExist)
+            if (doesEventExist)
             {
                 return Conflict(new Response { Type = "event-create-failure", Data = "There is already event in this place and it is active" });
             }
@@ -270,24 +284,32 @@ namespace Yottabyte.Server.Controllers
             return Ok(new Response { Type = "event-create-success" });
         }
 
-        /*
-        // DELETE: api/Events/5
+        // DELETE: api/events/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvent(int id)
+        public async Task<ActionResult<Response>> DeleteEvent(int id)
         {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var claims = ExtractClaims(token);
+
+            bool isReqUserAdmin = claims.ToArray()[1].Value == "True";
+
+            if (!isReqUserAdmin)
+            {
+                return Unauthorized(new Response { Type = "event-deletion-failure", Data = "The user isn't an admin" });
+            }
+
             var @event = await _context.Event.FindAsync(id);
             if (@event == null)
             {
-                return NotFound();
+                return NotFound(new Response { Type = "event-deletion-failure", Data = "The user isn't an admin" });
             }
 
             _context.Event.Remove(@event);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new Response { Type = "event-deletion-success" });
         }
-         * */
-
+        
         private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.Id == id);
@@ -308,6 +330,14 @@ namespace Yottabyte.Server.Controllers
                 Endpoint = endpoint
             };
             return predictionApi;
+        }
+
+        public IEnumerable<Claim> ExtractClaims(string jwtToken)
+        {
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            JwtSecurityToken securityToken = (JwtSecurityToken)tokenHandler.ReadToken(jwtToken);
+            IEnumerable<Claim> claims = securityToken.Claims;
+            return claims;
         }
     }
 }

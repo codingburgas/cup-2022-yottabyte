@@ -15,6 +15,9 @@ import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import Svg, { Path, Circle } from "react-native-svg";
 
+const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
+const API_ENDPOINT = SERVER_ENDPOINT + "/api";
+
 <StatusBar translucent backgroundColor="transparent" />;
 const Stack = createBottomTabNavigator();
 
@@ -138,10 +141,15 @@ function Map() {
   );
 }
 
-function Events({navigation}) {
+function Events({ navigation }) {
+  const [eventData, setEventData] = useState(null);
   useEffect(()=>{
     const onEventsEnter = navigation.addListener('focus', ()=>{
       console.log("fetch data for events");
+      fetchEvents().then((eventsDataJSON) => {
+        setEventData(eventsDataJSON);
+        console.log(eventData);
+      });
     });
     return onEventsEnter;
   }, [navigation]);
@@ -189,5 +197,42 @@ const styles = StyleSheet.create({
     left: '0%',
   },
 });
+
+function toURLEncoded(data) {
+  return Object.keys(data)
+      .map(
+          (key) =>
+              encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
+      )
+      .join("&");
+}
+
+async function fetchAPI(
+  endpoint,
+  data = {},
+  headers = {},
+  method = "GET"
+) {
+  let response = await fetch("https:" + API_ENDPOINT + endpoint, {
+      method,
+      mode: "cors",
+      headers: {
+          "Content-Type": "application/form-data",
+          ...headers,
+      },
+      body: method === "GET" ? null : toURLEncoded(data),
+  });
+  return response.json();
+}
+
+async function fetchEvents(token) {
+  return new Promise((res, rej) => {
+      fetchAPI(
+          "/events/"
+      )
+          .then(res)
+          .catch(rej);
+  });
+}
 
 export default App;

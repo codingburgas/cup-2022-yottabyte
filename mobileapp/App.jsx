@@ -138,12 +138,20 @@ function Map() {
   );
 }
 
-function Events() {
+function Events({navigation}) {
+  useEffect(()=>{
+    const onEventsEnter = navigation.addListener('focus', ()=>{
+      console.log("fetch data for events");
+    });
+    return onEventsEnter;
+  }, [navigation]);
+
   return (
     <>
-      <Text>testink...</Text>
+      <View style={styles.rectangle}></View>
     </>
   );
+
 }
 
 function Notifications() {
@@ -166,10 +174,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("screen").height,
+  },
+
+  eventContainer: {
+    height: "128px",
+    width: "128px",
+    backgroundColor: 'salmon',
+    position: 'absolute', 
+    zIndex: 99,
+    top: '0%',
+    left: '0%',
   },
 });
 

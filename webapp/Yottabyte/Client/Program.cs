@@ -8,8 +8,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Yottabyte.Client.Services;
-using Havit.Blazor.Components.Web;
-using Havit.Blazor.Components.Web.Bootstrap;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Tewr.Blazor.FileReader;
@@ -38,8 +36,6 @@ namespace Yottabyte.Client
             builder.Services.AddFileReaderService(options => {
                 options.UseWasmSharedBuffer = true;
             });
-
-            builder.Services.AddHxServices();
 
             await builder.Build().RunAsync();
         }

@@ -1,93 +1,46 @@
 ﻿@page "/"
 
-<section class="parent-main">
-    <div class="landing-container">
-        <div id="left-wrapper">
-            <div class="logo-container"></div>
+<section class="hero is-fullheight" style="background-image: url('img/side-gradient.png'); background-repeat: no-repeat; background-position: right;">
 
-            <div class="heading-main">
+        <div class="hero-body">
+
+            <div class="heading-main column">
                 <h1>Save your future through the power of <span class="ai-text">AI</span>.</h1>
+
+                <button class="start-now-button">
+                    Start now
+                    <svg class="button-arrow-svg" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
+                    </svg>
+                </button>
             </div>
 
-            <button class="start-now-button">
-                Start now
-                <svg class="button-arrow-svg" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
-                </svg>
-            </button>
+            <div class="column" >
+                <img class="mockup-devices" src="img/mockup.png" />
+            </div>
+
         </div>
 
-        <div id="right-wrapper">
-            <img class="side-gradient" src="img/side-gradient.png"/>
-            <img class="mockup-devices" src="img/mockup.png" />
-        </div>
+</section>
+
+<!--<section class="section">
+    <div class="container">
+        
+        
     </div>
-</section>
-
-<section class="parent-functionality">
-    <p class="func-tba">Functionality Screen (200vh)</p>
-</section>
-
-<section class="parent-social">
-    <p class="social-tba">Social Screen (100vh)</p>
-</section>
-
-<section class="parent-register">
-    <p class="register-tba">Register Screen (50vh)</p>
-</section>
-
+</section>-->
 
 <style>
 
-    /*===================== IMPORTS =====================*/
-    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
-    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap');
+    /*!debug.css | MIT License | zaydek.github.com/debug.css */
+/**:not(path):not(g)
+{
+    color:                     hsla(210, 100%, 100%, 0.9) !important;
+    background:                hsla(210, 100%,  50%, 0.5) !important;
+    outline:     solid 0.25rem hsla(210, 100%, 100%, 0.5) !important;
 
-    /* Margin reset */
-    *, html {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-    }
-
-    /*===================== FIRST SCREEN =====================*/
-
-    /* Section Styling*/
-    .parent-main {
-        background-color: #FAFBFF;
-        height: 100vh;
-        width: 100vw;
-        background-image: url('img/lines.svg');
-        background-repeat: no-repeat;
-        background-size: 105vw;
-    }
-
-    /* Screen being devided with flexbox */
-    .landing-container {
-        position: relative;
-        width: inherit;
-        height: inherit;
-        display: flex;
-        flex-direction: row;
-    }
-
-    /* Left half of the Landing Screen - logo, heading, ai-text & button */
-    #left-wrapper {
-        width: inherit;
-        margin: auto;
-        align-items: center;
-        justify-content: center;
-        margin-left: 9vw;
-        margin-top: 25vh;
-        overflow: hidden;
-    }
-
-    /* Styling for the logo container */
-    .logo-container {
-        height: 5vh;
-        width: 10vw;
-        background-color: dimgray;
-    }
+    box-shadow: none !important;
+}*/
 
     /* General pushback for the heading container */
     .heading-main {
@@ -96,7 +49,7 @@
 
     /* Nested styling for the h1 tag */
     .heading-main > h1 {
-        width: 40vw;
+        width: 45vw;
         color: #001854;
         font-family: 'Inter';
         font-style: normal;
@@ -137,14 +90,6 @@
         width: 2vw;
     }
 
-    /* Right half of the Landing Screen - side gradient & mockups */
-    #right-wrapper {
-        width: inherit;
-        margin: auto;
-        align-items: center;
-        justify-content: center;
-    }
-
     /* Styling for the side gradient */
     .side-gradient {
         display: block;
@@ -152,60 +97,21 @@
         margin-right: 0;
         width: 26vw;
         height: 100vh;
-        /* 
+         
             position: absolute;
             right: 0;
             top: 0;
             height: 100vh;
             width: 26vw;
             z-index: 0;
-        */
+        
     }
-
     /* Styling for the mockups */
     .mockup-devices {
         position: absolute;
         margin-left: 6vw;
         top: 10%;
         z-index: 1;
-    }
-
-
-    /*===================== SECOND SCREEN =====================*/
-    
-    .parent-functionality {
-        width: 100vw;
-        height: 200vh;
-        background-color: lightcoral;
-    }
-
-    .func-tba {
-        text-align: center;
-        font-size: 10rem;
-    }
-    /*===================== THIRD SCREEN =====================*/
-
-    .parent-social {
-        width: 100vw;
-        height: 100vh;
-        background-color: lightgreen;
-    }
-
-    .social-tba {
-        text-align: center;
-        font-size: 10rem;
-    }
-
-     /*===================== FOURTH SCREEN =====================*/
-
-     .parent-register {
-         width: 100vw;
-         height: 50vh;
-     }
-
-    .register-tba {
-        text-align: center;
-        font-size: 10rem;
     }
 
 </style>

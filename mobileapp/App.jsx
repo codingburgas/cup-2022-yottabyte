@@ -7,6 +7,8 @@ import {
   StatusBar,
   Text,
   Image,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -171,8 +173,6 @@ function Map({ navigation }) {
     });
   }
 
-  console.log({markerList});
-
   return (
     <View style={styles.container}>
       <MapView
@@ -202,7 +202,6 @@ function Events({ navigation }) {
   const [eventData, setEventData] = useState(null);
   useEffect(() => {
     const onEventsEnter = navigation.addListener("focus", () => {
-      console.log("fetch data for events");
       fetchEvents().then((eventsDataJSON) => {
         setEventData(eventsDataJSON);
       });
@@ -210,11 +209,18 @@ function Events({ navigation }) {
     return onEventsEnter;
   }, [navigation]);
 
+  let events = [];
+
+  if (eventData != null) {
+    eventData.forEach((event) => {
+      events.push(<View style={styles.eventContainer}></View>);
+    });
+  }
+
   return (
-    <>
-      <View style={styles.rectangle}></View>
-      {eventData != null && <Text>{JSON.stringify(eventData[0].lat)}</Text>}
-    </>
+    <SafeAreaView>
+      <ScrollView>{events}</ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -238,19 +244,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("screen").height,
   },
 
   eventContainer: {
-    height: "128px",
-    width: "128px",
-    backgroundColor: "salmon",
-    position: "absolute",
-    zIndex: 99,
-    top: "0%",
-    left: "0%",
+    height: 192,
+    width: "91%",
+    backgroundColor: "white",
+    borderRadius: 27,
+    marginTop: 34,
+    marginBottom: 10,
+    left: "4.5%",
+    shadowColor: "#9D9D9D",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2.22,
+
+    elevation: 25,
   },
 });
 

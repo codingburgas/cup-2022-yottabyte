@@ -153,15 +153,13 @@ function Map({ navigation }) {
   }, [navigation]);
 
   let markerList = [];
-  let c = 0;
-  if(eventData != null)
-  {
-    eventData.forEach( evtDat => {
+  if (eventData != null) {
+    eventData.forEach((evtDat) => {
       markerList.push(
         <Marker
           coordinate={{
-            latitude: parseInt(eventData[c].lat),
-            longitude: parseInt(eventData[c].long),
+            latitude: parseFloat(evtDat.lat),
+            longitude: parseFloat(evtDat.long),
           }}
         >
           <Image
@@ -169,10 +167,11 @@ function Map({ navigation }) {
             style={{ height: 20, width: 20 }}
           />
         </Marker>
-      )
-      c++;
-    })
+      );
+    });
   }
+
+  console.log({markerList});
 
   return (
     <View style={styles.container}>

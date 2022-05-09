@@ -152,6 +152,28 @@ function Map({ navigation }) {
     return onEventsEnter;
   }, [navigation]);
 
+  let markerList = [];
+  let c = 0;
+  if(eventData != null)
+  {
+    eventData.forEach( evtDat => {
+      markerList.push(
+        <Marker
+          coordinate={{
+            latitude: parseInt(eventData[c].lat),
+            longitude: parseInt(eventData[c].long),
+          }}
+        >
+          <Image
+            source={require("./assets/images/markerImage.png")}
+            style={{ height: 20, width: 20 }}
+          />
+        </Marker>
+      )
+      c++;
+    })
+  }
+
   return (
     <View style={styles.container}>
       <MapView
@@ -171,12 +193,7 @@ function Map({ navigation }) {
           longitudeDelta: 0.0421,
         }}
       >
-        {eventData != null &&(<Marker
-          coordinate={{
-            latitude: parseInt(eventData[1].lat),
-            longitude: parseInt(eventData[1].long),
-          }}
-        ></Marker>)}
+        {markerList}
       </MapView>
     </View>
   );

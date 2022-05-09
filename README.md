@@ -125,3 +125,7 @@
 - <a href = "https://github.com/BNSavov19"> Boris Savov </a>
 - <a href = "https://github.com/VTIvanov20"> Valeri Ivanov </a>
 - <a href = "https://github.com/KNTaligadzhiev19"> Kostadin Taligadzhiev </a>
+
+<hr>
+
+## <p align = "center">Made with ❤️ by team Yottabyte for <B>Imagine Cup Junior 2022!</B></p>

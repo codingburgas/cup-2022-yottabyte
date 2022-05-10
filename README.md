@@ -16,14 +16,14 @@
 ## 💻 About
 <p align="center">This is an application for the 2022 Imagine Junior Cup, meant to detect polluted beaches and organise clean up events through the power of AI.</p>
 
-## 🗂️ Used technologies:
+## 🗂️ Tech Stack:
 ### Used code editors for the project's realisation:
 <p align="left">
     <a href="https://visualstudio.microsoft.com/vs/"><img src="https://img.icons8.com/color/344/visual-studio--v2.png" alt="VS logo" width=48px /></a>
     <a href="https://code.visualstudio.com/"><img src="https://img.icons8.com/color/344/visual-studio-code-2019.png" alt="VS code logo" width=48px /></a>
 </p>
 
-### Used technologies about the visual elements & shared work environment:
+### Used tools for the visual elements & shared work environment:
 <p align="left">
     <a href="https://www.figma.com/"><img src="https://img.icons8.com/color/344/figma--v1.png" alt="Figma logo" width=48px/></a>
     <a href="https://www.adobe.com/bg/products/aftereffects.html"><img src="https://img.icons8.com/color/344/adobe-after-effects--v1.png" alt="After Effects logo" width=52px/></a>
@@ -45,7 +45,7 @@
     <a href="https://javascript.info/"><img src="https://img.icons8.com/color/344/javascript--v1.png" alt="JavaScript logo" width=54px /></a>
 </p>
 
-### Used technologies for our backend development:
+### Used technologies for our backend & AI development:
 <p align="left">
     <a href="https://azure.microsoft.com/en-us/"><img src="https://img.icons8.com/fluency/344/azure-1.png" alt="Azure logo" width=48px /></a>
     <a href="https://azure.microsoft.com/en-us/services/azure-maps/"><img src="https://docs.microsoft.com/en-us/answers/storage/attachments/8698-azure-maps-arrow.png" alt="Azure Maps logo" width=38px /></a>

@@ -9,6 +9,7 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -213,7 +214,38 @@ function Events({ navigation }) {
 
   if (eventData != null) {
     eventData.forEach((event) => {
-      events.push(<View style={styles.eventContainer}></View>);
+      let name = event.location.split(",");
+      let time = event.startTime.split("T");
+      events.push(
+        <View style={styles.eventContainer}>
+          <Image
+            source={{
+              uri: `${event.imageURL}`,
+            }}
+            style={styles.eventImage}
+          />
+          <Text style={styles.eventName}>{name[2].substr(1, 12)}</Text>
+          <MaterialCommunityIcons
+            name="map-marker-outline"
+            color="#B2B1B6"
+            size={13}
+            style={styles.eventIconLocation}
+          />
+          <Text style={styles.eventLocation}>
+            {event.location.substr(0, 30)}
+          </Text>
+          <MaterialCommunityIcons
+            name="clock-time-two-outline"
+            color="#B2B1B6"
+            size={13}
+            style={styles.eventIconTime}
+          />
+          <Text style={styles.eventTime}>{time[1]}</Text>
+          <TouchableOpacity style={styles.eventButton}>
+            <Text style={styles.eventButtonText}>More Info</Text>
+          </TouchableOpacity>
+        </View>
+      );
     });
   }
 
@@ -267,6 +299,65 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
 
     elevation: 25,
+  },
+
+  eventImage: {
+    width: "30%",
+    height: 158,
+    top: 17,
+    left: "4%",
+    borderRadius: 22,
+    position: "absolute",
+  },
+
+  eventName: {
+    fontSize: 28,
+    top: 23,
+    left: "42%",
+    color: "#00103A",
+  },
+
+  eventLocation: {
+    fontSize: 11,
+    top: 33,
+    left: "46%",
+    color: "#B2B1B6",
+  },
+
+  eventTime: {
+    fontSize: 11,
+    top: 43,
+    left: "46%",
+    color: "#B2B1B6",
+  },
+
+  eventIconLocation: {
+    position: "absolute",
+    top: 76,
+    left: "42%",
+  },
+
+  eventIconTime: {
+    position: "absolute",
+    top: 102,
+    left: "42%",
+  },
+
+  eventButton: {
+    height: 41,
+    width: "47%",
+    borderRadius: 45,
+    backgroundColor: "#245BF5",
+    top: 61,
+    left: "42%",
+  },
+
+  eventButtonText: {
+    fontSize: 16,
+    top: 8,
+    left: "25%",
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

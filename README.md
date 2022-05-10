@@ -26,6 +26,7 @@
 ### Used technologies about the visual elements & shared work environment:
 <p align="left">
     <a href="https://www.figma.com/"><img src="https://img.icons8.com/color/344/figma--v1.png" alt="Figma logo" width=48px/></a>
+    <a href="https://www.adobe.com/bg/products/aftereffects.html"><img src="https://img.icons8.com/color/344/adobe-after-effects--v1.png" alt="After Effects logo" width=52px/></a>
     <a href="https://github.com/"><img src="https://img.icons8.com/nolan/344/github.png" alt="GitHub logo" width=52px /></a>
 </p>
 
@@ -40,14 +41,18 @@
 
 ### Used technologies for the app's development:
 <p align="left">
-    <a href="https://reactnative.dev/"><img src="https://img.icons8.com/color/344/react-native.png" alt="React Native logo" width=48px /></a>
-    <a href="https://javascript.info/"><img src="https://img.icons8.com/color/344/javascript--v1.png" alt="JavaScript logo" width=48px /></a>
+    <a href="https://reactnative.dev/"><img src="https://img.icons8.com/color/344/react-native.png" alt="React Native logo" width=50px /></a>
+    <a href="https://javascript.info/"><img src="https://img.icons8.com/color/344/javascript--v1.png" alt="JavaScript logo" width=54px /></a>
 </p>
 
 ### Used technologies for our backend development:
 <p align="left">
-    <a href="https://azure.microsoft.com/en-us/"><img src="https://img.icons8.com/color/452/azure-1.png" alt="Azure logo" width=48px /></a>
-    <a href="https://www.mysql.com/"><img src="https://img.icons8.com/color/452/mysql-logo.png" alt="mysql logo" width=48px /></a>
+    <a href="https://azure.microsoft.com/en-us/"><img src="https://img.icons8.com/fluency/344/azure-1.png" alt="Azure logo" width=48px /></a>
+    <a href="https://azure.microsoft.com/en-us/services/azure-maps/"><img src="https://docs.microsoft.com/en-us/answers/storage/attachments/8698-azure-maps-arrow.png" alt="Azure Maps logo" width=38px /></a>
+    <a href="https://azure.microsoft.com/en-us/services/app-service/"><img src="https://ms-azuretools.gallerycdn.vsassets.io/extensions/ms-azuretools/vscode-azureappservice/0.23.3/1650585198428/Microsoft.VisualStudio.Services.Icons.Default" alt="Azure App Service logo" width=48px /></a>
+    <a href="https://azure.microsoft.com/en-us/products/azure-sql/database/"><img src="https://ms-azuretools.gallerycdn.vsassets.io/extensions/ms-azuretools/vscode-cosmosdb/0.18.1/1628816348156/Microsoft.VisualStudio.Services.Icons.Default" alt="DB logo" width=50px /></a>
+    <a href="https://docs.microsoft.com/en-us/azure/storage/"><img src="https://ms-azuretools.gallerycdn.vsassets.io/extensions/ms-azuretools/vscode-azurestorage/0.13.0/1643236289029/Microsoft.VisualStudio.Services.Icons.Default" alt="Storage Accounts logo" width=48px /></a>
+    <a href="https://www.customvision.ai/"><img src="https://www.customvision.ai/Images/logo.svg" alt="Custom Vision logo" width=50px /></a>
 </p>
 
 ## 📄 Documents

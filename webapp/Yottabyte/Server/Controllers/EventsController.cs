@@ -167,9 +167,20 @@ namespace Yottabyte.Server.Controllers
                 _configuration["AzureCustomVision:PredictionModelPublishedName"],
                 eventIm.Image.OpenReadStream());
 
+            double unclearProb = 0;
+            double clearProb = 0;
 
-            double unclearProb = result.Predictions[0].Probability;
-            double clearProb = result.Predictions[1].Probability;
+            foreach (var predicion in result.Predictions)
+            {
+                if (predicion.TagName == "Clear")
+                {
+                    clearProb = predicion.Probability;
+                }
+                else if (predicion.TagName == "Unclear")
+                {
+                    unclearProb = predicion.Probability;
+                }
+            }
 
             if (unclearProb <= clearProb)
             {
@@ -179,35 +190,41 @@ namespace Yottabyte.Server.Controllers
             // Get the geolocation
             var am = new AzureMapsToolkit.AzureMapsServices(_configuration["AzureMaps:Key"]);
 
-            Console.WriteLine(@event.Lat.ToString());
-            Console.WriteLine(@event.Long.ToString());
-
-            var searchReverseRequest = new SearchAddressReverseRequest
+            var searchReverseRequest = new SearchNearbyRequest
             {
-                Query = @event.Lat.ToString() + "," + @event.Long.ToString(),
+                Lat = Double.Parse(@event.Lat),
+                Lon = Double.Parse(@event.Long),
                 Language = "en_EN"
             };
 
-            var resp = am.GetSearchAddressReverse(searchReverseRequest).Result;
+            var resp = am.GetSearchNearby(searchReverseRequest).Result;
             
             if (resp.Error != null)
             {
                 return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting reverse geolocation! Please try again! " + resp.Error.Error.Message });
             }
 
-            var address = resp.Result.Addresses[0].Address;
-            string location;
+            int index = 0;
 
-            if (address.StreetName != null)
+            for (int i = 0; i < resp.Result.Results.Length; i++)
             {
-                location = $"{address.Country}, {address.Municipality}, {address.StreetName}";
-            }
-            else
-            {
-                location = $"{address.Country}, {address.Municipality}, Beach";
-            }
+                if (resp.Result.Results[i].Poi.Categories.Contains("beach"))
+                {
+                    index = i;
+                    break;
+                }
 
-            @event.Location = location;;
+                if (i + 1 == resp.Result.Results.Length)
+                {
+                    return BadRequest(new Response { Type = "event-create-failure", Data = "There is not a beach at this location!" });
+                }
+
+            }
+        
+            var address = resp.Result.Results[index].Address;    
+            var nameOfBeach = resp.Result.Results[index].Poi.Name;
+            
+            @event.Location = $"{address.Country}, {address.Municipality}, {nameOfBeach}";
 
             var timezonRequest = new TimeZoneRequest
             {

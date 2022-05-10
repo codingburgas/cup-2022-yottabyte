@@ -5,11 +5,11 @@ on:
     - main
 env:
   AZURE_WEBAPP_NAME: Yottabyte-Server-Test
-  AZURE_WEBAPP_PACKAGE_PATH: Yottabyte\Server/publish
+  AZURE_WEBAPP_PACKAGE_PATH:  webapp\Yottabyte\Server/publish
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.Yottabyte_Server_Test_90aa }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 5.0.x
-  WORKING_DIRECTORY: Yottabyte\Server
+  WORKING_DIRECTORY: webapp\Yottabyte\Server
 jobs:
   build-and-deploy:
     runs-on: windows-latest

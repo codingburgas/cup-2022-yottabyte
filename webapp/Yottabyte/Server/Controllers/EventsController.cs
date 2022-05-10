@@ -154,7 +154,7 @@ namespace Yottabyte.Server.Controllers
 
             if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
             {
-                return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of avatar image is invalid" });
+                return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of the image is invalid" });
             }
 
             // Send the image to the Azure Custom Vision API Endpoint            
@@ -204,6 +204,11 @@ namespace Yottabyte.Server.Controllers
                 return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting reverse geolocation! Please try again! " + resp.Error.Error.Message });
             }
 
+            if (resp.Result.Results.Length == 0)
+            {
+                return BadRequest(new Response { Type = "event-create-failure", Data = "There is not a beach at this location!" });
+            }
+
             int index = 0;
 
             for (int i = 0; i < resp.Result.Results.Length; i++)
@@ -214,13 +219,13 @@ namespace Yottabyte.Server.Controllers
                     break;
                 }
 
-                if (i + 1 == resp.Result.Results.Length)
+                if (i == resp.Result.Results.Length + 1)
                 {
                     return BadRequest(new Response { Type = "event-create-failure", Data = "There is not a beach at this location!" });
                 }
 
             }
-        
+
             var address = resp.Result.Results[index].Address;    
             var nameOfBeach = resp.Result.Results[index].Poi.Name;
             
@@ -318,8 +323,23 @@ namespace Yottabyte.Server.Controllers
             var @event = await _context.Event.FindAsync(id);
             if (@event == null)
             {
-                return NotFound(new Response { Type = "event-deletion-failure", Data = "The user isn't an admin" });
+                return NotFound(new Response { Type = "event-deletion-failure", Data = "There isn't an event with this id" });
             }
+
+            var connectionString = (string)_configuration["AzureStorage:ConnectionString"];
+
+            BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+
+            string containerName = "yottabyteeventimagestest";
+
+            BlobContainerClient containerClient;
+
+            containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            containerClient.CreateIfNotExists();
+
+            // This should be dynamic calculated
+            BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(@event.ImageURL[77..]);
+            await blockBlobClient.DeleteAsync();
 
             _context.Event.Remove(@event);
             await _context.SaveChangesAsync();

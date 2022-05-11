@@ -1,0 +1,116 @@
+﻿@using Tewr.Blazor.FileReader
+@using System.IO
+
+@inject IUsersServices UserServices
+@inject IJSRuntime js
+@inject IFileReaderService fileReader
+
+
+    <div class="columns " style="display: flex; align-items: center; justify-content: center; margin: 5%; background-image: url('img/Group 45.png'); background-repeat: no-repeat; background-size: cover; ">
+        <div class="column">
+            
+        </div>
+        <div class="column" style="margin-top:10%; margin-right:5%">
+            <EditForm Model="User" OnSubmit="HandleSubmit">
+                <section style="margin-left: 5%; margin-top: 5%;">
+
+                    <div class="field is-horizontal">
+                        <div class="field-body" style="margin-top: 10%;">
+                            <div class="field">
+                                <p class="control">
+                                    <InputText @bind-Value="User.FName" type="text" placeholder="First Name" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
+
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control">
+                                    <InputText @bind-Value="User.LName" type="text" placeholder="Last name" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
+
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field" style="margin-top: 10%;">
+                        <div class="control">
+                            <InputText @bind-Value="User.Email" placeholder="Email" class="form-control" type="email" required></InputText>
+                        </div>
+                    </div>
+
+                    <div class="field" style="margin-top: 10%;">
+                        <div class="control">
+                            <InputText @bind-Value="User.Password" placeholder="Password" class="form-control" type="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}"></InputText>
+                        </div>
+                    </div>
+
+                    <div class="file has-name" style="margin-top: 10%;">
+                        <label class="file-label">
+                            <input @ref=inputReference class="file-input form-control" type="file" name="resume">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    Choose a file…
+                                </span>
+                            </span>
+                            <span class="file-name">
+                                Upload your profile avatar...
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="border-radius: 50px; width:200px; height:50px; margin-top:50%; margin-bottom:30%;" >Submit</button>
+                    <p>@recordSet</p>
+
+                </section>
+            </EditForm>
+        </div>
+    </div>
+
+        
+
+
+
+        @code {
+            ElementReference inputReference;
+            public string recordSet = "";
+            public Yottabyte.Shared.UserIM User { get; set; } = new Yottabyte.Shared.UserIM();
+            public Stream avatarImg = null;
+
+            protected override async Task OnInitializedAsync()
+            {
+                UserServices.OnChange += StateHasChanged;
+            }
+
+            async void HandleSubmit()
+            {
+                var file = (await fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+                string filename = null;
+
+                if (file != null)
+                {
+                    var fileInfo = await file.ReadFileInfoAsync();
+                    filename = fileInfo.Name;
+
+                    using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
+                    {
+                        avatarImg = new MemoryStream(ms.ToArray());
+                    }
+                }
+
+                recordSet = "Loading... Please wait!";
+                StateHasChanged();
+                await js.InvokeVoidAsync("console.log", User);
+                recordSet = await UserServices.CreateUser(User, avatarImg, filename);
+                Console.WriteLine(recordSet);
+                UserServices.OnChange += StateHasChanged;
+                StateHasChanged();
+            }
+
+            async Task OnFileChanged()
+            {
+
+            }
+        }

@@ -55,11 +55,23 @@
     <a href="https://www.customvision.ai/"><img src="https://www.customvision.ai/Images/logo.svg" alt="Custom Vision logo" width=50px /></a>
 </p>
 
+### Used services for our documentation & presentation:
+<p align="left">
+    <a href="https://www.doxygen.nl/"><img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/6ac1857f-f453-48fa-b3b9-4033de693b17/dbd0jys-fde5ad33-8c95-4dea-83fc-56c72aea2eb1.png" alt="Doxygen logo" width=50px /></a>
+    <a href="https://www.microsoft.com/bg-bg/microsoft-365/visio/flowchart-software"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Microsoft_Office_Visio_%282019%29.svg/2149px-Microsoft_Office_Visio_%282019%29.svg.png" alt="MS Visio logo" width=54px /></a>
+    <a href="https://www.microsoft.com/en-us/microsoft-365/powerpoint"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Microsoft_Office_PowerPoint_%282019%E2%80%93present%29.svg/640px-Microsoft_Office_PowerPoint_%282019%E2%80%93present%29.svg.png" alt="MS PowerPoint logo" width=54px /></a>
+    <a href="https://www.postman.com/"><img src="https://res.cloudinary.com/postman/image/upload/t_team_logo/v1629869194/team/2893aede23f01bfcbd2319326bc96a6ed0524eba759745ed6d73405a3a8b67a8" alt="Postman logo" width=54px /></a>
+</p>
+
 ## 📄 Documents
 ### Presentation:
 - [PowerPoint]()
 ### Video:
   - [Yottabyte Video]()
+### Code Documentation:
+- [Doxygen](https://ssivanov19.github.io/yottabyte-docs/)
+### QA Documenatation:
+- [Postman](https://documenter.getpostman.com/view/14581342/UyxgHncX)
 
 ## 📥 Installation & Set Up
 <p> To install our project on your machine you just need to clone it. This can be done by following these steps! </p>

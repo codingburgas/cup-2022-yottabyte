@@ -154,7 +154,7 @@ namespace Yottabyte.Server.Controllers
 
             if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
             {
-                return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of avatar image is invalid" });
+                return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of the image is invalid" });
             }
 
             // Send the image to the Azure Custom Vision API Endpoint            
@@ -167,9 +167,20 @@ namespace Yottabyte.Server.Controllers
                 _configuration["AzureCustomVision:PredictionModelPublishedName"],
                 eventIm.Image.OpenReadStream());
 
+            double unclearProb = 0;
+            double clearProb = 0;
 
-            double unclearProb = result.Predictions[0].Probability;
-            double clearProb = result.Predictions[1].Probability;
+            foreach (var predicion in result.Predictions)
+            {
+                if (predicion.TagName == "Clear")
+                {
+                    clearProb = predicion.Probability;
+                }
+                else if (predicion.TagName == "Unclear")
+                {
+                    unclearProb = predicion.Probability;
+                }
+            }
 
             if (unclearProb <= clearProb)
             {
@@ -179,35 +190,46 @@ namespace Yottabyte.Server.Controllers
             // Get the geolocation
             var am = new AzureMapsToolkit.AzureMapsServices(_configuration["AzureMaps:Key"]);
 
-            Console.WriteLine(@event.Lat.ToString());
-            Console.WriteLine(@event.Long.ToString());
-
-            var searchReverseRequest = new SearchAddressReverseRequest
+            var searchReverseRequest = new SearchNearbyRequest
             {
-                Query = @event.Lat.ToString() + "," + @event.Long.ToString(),
+                Lat = Double.Parse(@event.Lat),
+                Lon = Double.Parse(@event.Long),
                 Language = "en_EN"
             };
 
-            var resp = am.GetSearchAddressReverse(searchReverseRequest).Result;
+            var resp = am.GetSearchNearby(searchReverseRequest).Result;
             
             if (resp.Error != null)
             {
                 return StatusCode(500, new Response { Type = "event-create-failure", Data = "There was porblem with getting reverse geolocation! Please try again! " + resp.Error.Error.Message });
             }
 
-            var address = resp.Result.Addresses[0].Address;
-            string location;
-
-            if (address.StreetName != null)
+            if (resp.Result.Results.Length == 0)
             {
-                location = $"{address.Country}, {address.Municipality}, {address.StreetName}";
-            }
-            else
-            {
-                location = $"{address.Country}, {address.Municipality}, Beach";
+                return BadRequest(new Response { Type = "event-create-failure", Data = "There is not a beach at this location!" });
             }
 
-            @event.Location = location;;
+            int index = 0;
+
+            for (int i = 0; i < resp.Result.Results.Length; i++)
+            {
+                if (resp.Result.Results[i].Poi.Categories.Contains("beach"))
+                {
+                    index = i;
+                    break;
+                }
+
+                if (i == resp.Result.Results.Length + 1)
+                {
+                    return BadRequest(new Response { Type = "event-create-failure", Data = "There is not a beach at this location!" });
+                }
+
+            }
+
+            var address = resp.Result.Results[index].Address;    
+            var nameOfBeach = resp.Result.Results[index].Poi.Name;
+            
+            @event.Location = $"{address.Country}, {address.Municipality}, {nameOfBeach}";
 
             var timezonRequest = new TimeZoneRequest
             {
@@ -301,8 +323,23 @@ namespace Yottabyte.Server.Controllers
             var @event = await _context.Event.FindAsync(id);
             if (@event == null)
             {
-                return NotFound(new Response { Type = "event-deletion-failure", Data = "The user isn't an admin" });
+                return NotFound(new Response { Type = "event-deletion-failure", Data = "There isn't an event with this id" });
             }
+
+            var connectionString = (string)_configuration["AzureStorage:ConnectionString"];
+
+            BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+
+            string containerName = "yottabyteeventimagestest";
+
+            BlobContainerClient containerClient;
+
+            containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            containerClient.CreateIfNotExists();
+
+            // This should be dynamic calculated
+            BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(@event.ImageURL[77..]);
+            await blockBlobClient.DeleteAsync();
 
             _context.Event.Remove(@event);
             await _context.SaveChangesAsync();

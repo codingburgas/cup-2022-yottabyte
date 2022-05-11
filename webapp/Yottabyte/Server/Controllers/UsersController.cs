@@ -48,7 +48,7 @@ namespace Yottabyte.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserVM>>> GetUser()
         {
-            List<UserVM> usersVM = new List<UserVM>();
+            List<UserVM> usersVM = new();
 
             (await _context.User.ToListAsync()).ForEach(
                 u => usersVM.Add(UserToVM(u))

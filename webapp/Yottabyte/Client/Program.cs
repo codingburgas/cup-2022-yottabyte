@@ -30,7 +30,6 @@ namespace Yottabyte.Client
                 client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
            // .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-            builder.Services.AddScoped<ISuperHeroService, SuperHeroService>();
             builder.Services.AddScoped<IUsersServices, UserServices>();
             
             builder.Services.AddFileReaderService(options => {

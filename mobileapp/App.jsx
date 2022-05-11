@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -19,6 +19,7 @@ import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import Svg, { Path, Circle } from "react-native-svg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
 const API_ENDPOINT = SERVER_ENDPOINT + "/api";
@@ -107,6 +108,12 @@ function Map({ navigation }) {
   const [userLocationLong, setUserLocationLong] = useState(0);
   let markerCoordsLat = 0;
   let markerCoordsLong = 0;
+  const refRBSheet = useRef();
+  const [modalName, setModalName] = useState(null);
+  const [modalImage, setModalImage] = useState(null);
+  const [modalLocation, setModalLocation] = useState(null);
+  const [modalDate, setModalDate] = useState(null);
+  const [modalTime, setModalTime] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -157,12 +164,16 @@ function Map({ navigation }) {
 
   let markerList = [];
   if (eventData != null) {
-    eventData.forEach((evtDat) => {
+    eventData.forEach((event) => {
       markerList.push(
         <Marker
           coordinate={{
-            latitude: parseFloat(evtDat.lat),
-            longitude: parseFloat(evtDat.long),
+            latitude: parseFloat(event.lat),
+            longitude: parseFloat(event.long),
+          }}
+          onPress={() => {
+            refRBSheet.current.open();
+            setModalInfo(event);
           }}
         >
           <Image
@@ -173,6 +184,22 @@ function Map({ navigation }) {
       );
     });
   }
+
+  const setModalInfo = (event) => {
+    let name = event.location.split(",");
+    let time = event.startTime.split("T");
+    let location;
+    console.log(event.location.length);
+    location =
+      event.location.length > 30
+        ? event.location.substr(0, 30) + "..."
+        : event.location;
+    setModalName(name[2]);
+    setModalImage(event.imageURL);
+    setModalLocation(location);
+    setModalDate(time[0]);
+    setModalTime(time[1]);
+  };
 
   return (
     <View style={styles.container}>
@@ -195,12 +222,101 @@ function Map({ navigation }) {
       >
         {markerList}
       </MapView>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        height={Dimensions.get("screen").height - 100}
+        customStyles={{
+          wrapper: {
+            backgroundColor: "transparent",
+            borderRadius: 100,
+          },
+          draggableIcon: {
+            backgroundColor: "#6D6D6D",
+          },
+          container: {
+            borderRadius: 50,
+          },
+        }}
+      >
+        {modalName != null && (
+          <>
+            <Text style={styles.modalName}>{modalName}</Text>
+            <View style={styles.modalImageBox}>
+              <Image
+                source={{
+                  uri: `${modalImage}`,
+                }}
+                style={styles.modalImage}
+              />
+              <MaterialCommunityIcons
+                name="map-marker"
+                color="#245BF5"
+                size={20}
+                style={styles.modalIconLocation}
+              />
+              <Text style={styles.modalLocation}>{modalLocation}</Text>
+            </View>
+            <View style={styles.modalBox}>
+              <MaterialCommunityIcons
+                name="clock-time-ten-outline"
+                color="#245BF5"
+                size={26}
+                style={styles.modalIconTime}
+              />
+              <Text style={styles.modalDate}>{modalDate}</Text>
+              <Text style={styles.modalTime}>
+                {modalTime.substr(0, 5)} - {modalTime.substr(0, 3) + 30}
+              </Text>
+              <View
+                style={{
+                  borderBottomColor: "#E2E2E2",
+                  borderBottomWidth: 2,
+                }}
+              />
+              <MaterialCommunityIcons
+                name="trophy"
+                color="#245BF5"
+                size={26}
+                style={styles.modalIconTime}
+              />
+              <Text style={styles.modalDate}>Award Presence</Text>
+              <Text style={styles.modalTime}>Built Different</Text>
+              <View
+                style={{
+                  borderBottomColor: "#E2E2E2",
+                  borderBottomWidth: 2,
+                }}
+              />
+              <MaterialCommunityIcons
+                name="human-male-male"
+                color="#245BF5"
+                size={26}
+                style={styles.modalIconTime}
+              />
+              <Text style={styles.modalDate}>15 people are coming</Text>
+              <Text style={styles.modalTime}>4 friends</Text>
+            </View>
+            <TouchableOpacity style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>I’m in!</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </RBSheet>
     </View>
   );
 }
 
 function Events({ navigation }) {
   const [eventData, setEventData] = useState(null);
+  const refRBSheet = useRef();
+  const [modalName, setModalName] = useState(null);
+  const [modalImage, setModalImage] = useState(null);
+  const [modalLocation, setModalLocation] = useState(null);
+  const [modalDate, setModalDate] = useState(null);
+  const [modalTime, setModalTime] = useState(null);
+
   useEffect(() => {
     const onEventsEnter = navigation.addListener("focus", () => {
       fetchEvents().then((eventsDataJSON) => {
@@ -241,7 +357,13 @@ function Events({ navigation }) {
             style={styles.eventIconTime}
           />
           <Text style={styles.eventTime}>{time[1]}</Text>
-          <TouchableOpacity style={styles.eventButton}>
+          <TouchableOpacity
+            style={styles.eventButton}
+            onPress={() => {
+              refRBSheet.current.open();
+              setModalInfo(event);
+            }}
+          >
             <Text style={styles.eventButtonText}>More Info</Text>
           </TouchableOpacity>
         </View>
@@ -249,9 +371,107 @@ function Events({ navigation }) {
     });
   }
 
+  const setModalInfo = (event) => {
+    let name = event.location.split(",");
+    let time = event.startTime.split("T");
+    let location;
+    console.log(event.location.length);
+    location =
+      event.location.length > 30
+        ? event.location.substr(0, 30) + "..."
+        : event.location;
+    setModalName(name[2]);
+    setModalImage(event.imageURL);
+    setModalLocation(location);
+    setModalDate(time[0]);
+    setModalTime(time[1]);
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>{events}</ScrollView>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        height={Dimensions.get("screen").height - 100}
+        customStyles={{
+          wrapper: {
+            backgroundColor: "transparent",
+            borderRadius: 100,
+          },
+          draggableIcon: {
+            backgroundColor: "#6D6D6D",
+          },
+          container: {
+            borderRadius: 50,
+          },
+        }}
+      >
+        {modalName != null && (
+          <>
+            <Text style={styles.modalName}>{modalName}</Text>
+            <View style={styles.modalImageBox}>
+              <Image
+                source={{
+                  uri: `${modalImage}`,
+                }}
+                style={styles.modalImage}
+              />
+              <MaterialCommunityIcons
+                name="map-marker"
+                color="#245BF5"
+                size={20}
+                style={styles.modalIconLocation}
+              />
+              <Text style={styles.modalLocation}>{modalLocation}</Text>
+            </View>
+            <View style={styles.modalBox}>
+              <MaterialCommunityIcons
+                name="clock-time-ten-outline"
+                color="#245BF5"
+                size={26}
+                style={styles.modalIconTime}
+              />
+              <Text style={styles.modalDate}>{modalDate}</Text>
+              <Text style={styles.modalTime}>
+                {modalTime.substr(0, 5)} - {modalTime.substr(0, 3) + 30}
+              </Text>
+              <View
+                style={{
+                  borderBottomColor: "#E2E2E2",
+                  borderBottomWidth: 2,
+                }}
+              />
+              <MaterialCommunityIcons
+                name="trophy"
+                color="#245BF5"
+                size={26}
+                style={styles.modalIconTime}
+              />
+              <Text style={styles.modalDate}>Award Presence</Text>
+              <Text style={styles.modalTime}>Built Different</Text>
+              <View
+                style={{
+                  borderBottomColor: "#E2E2E2",
+                  borderBottomWidth: 2,
+                }}
+              />
+              <MaterialCommunityIcons
+                name="human-male-male"
+                color="#245BF5"
+                size={26}
+                style={styles.modalIconTime}
+              />
+              <Text style={styles.modalDate}>15 people are coming</Text>
+              <Text style={styles.modalTime}>4 friends</Text>
+            </View>
+            <TouchableOpacity style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>I’m in!</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </RBSheet>
     </SafeAreaView>
   );
 }
@@ -358,6 +578,100 @@ const styles = StyleSheet.create({
     left: "25%",
     color: "white",
     fontWeight: "bold",
+  },
+
+  modalName: {
+    fontSize: 38,
+    top: 8,
+    color: "#00103A",
+    textAlign: "center",
+  },
+
+  modalImage: {
+    width: "100%",
+    height: 220,
+    borderRadius: 19,
+  },
+
+  modalIconLocation: {
+    top: 13,
+    left: "6%",
+  },
+
+  modalLocation: {
+    fontSize: 17,
+    bottom: 10,
+    left: "16%",
+    color: "#525252",
+  },
+
+  modalIconTime: {
+    top: 20,
+    left: "5%",
+  },
+
+  modalDate: {
+    fontSize: 17,
+    bottom: 15,
+    left: "18%",
+    color: "#525252",
+  },
+
+  modalTime: {
+    fontSize: 17,
+    bottom: 15,
+    left: "18%",
+    color: "#828282",
+  },
+
+  modalButton: {
+    height: 79,
+    width: "82%",
+    borderRadius: 45,
+    backgroundColor: "#2491F5",
+    top: 81,
+    left: "9%",
+    shadowColor: "#9D9D9D",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2.22,
+
+    elevation: 8,
+  },
+
+  modalButtonText: {
+    fontSize: 28,
+    top: 16,
+    left: "38%",
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  modalBox: {
+    borderWidth: 2,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderColor: "#E2E2E2",
+    top: 50,
+    width: "82%",
+    left: "9%",
+  },
+
+  modalImageBox: {
+    borderWidth: 2,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderColor: "#E2E2E2",
+    width: "82%",
+    left: "9%",
+    top: 20,
   },
 });
 

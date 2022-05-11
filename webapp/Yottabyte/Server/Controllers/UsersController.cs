@@ -23,13 +23,27 @@ using Yottabyte.Server.Data;
 
 namespace Yottabyte.Server.Controllers
 {
+    /// <summary>
+    /// Controler for the user management
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class UsersController : ControllerBase
     {
+        /// <summary>
+        /// The data contex from the EF
+        /// </summary>
         private readonly DataContext _context;
+
+        /// <summary>
+        ///  The coniguration to get the secrets from the application.json
+        /// </summary>
         private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Dictionary for converting the file extension to connection type
+        /// </summary>
         public readonly Dictionary<string, string> fileExtToConType = new()
         {
              { ".png", "image/x-png" },
@@ -38,12 +52,21 @@ namespace Yottabyte.Server.Controllers
             { ".gif", "image/gif" }
         };
 
+        /// <summary>
+        /// Constructor for the User Controller
+        /// </summary>
+        /// <param name="context">Data Context</param>
+        /// <param name="configuration">Configuration</param>
         public UsersController(DataContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Function to returns all of the users
+        /// </summary>
+        /// <returns>All of the users</returns>
         // GET: api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserVM>>> GetUser()
@@ -57,6 +80,11 @@ namespace Yottabyte.Server.Controllers
             return usersVM;
         }
 
+        /// <summary>
+        /// Functon to get a user with specific id
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <returns>The user</returns>
         // GET: api/users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserVM>> GetUser(int id)
@@ -71,6 +99,12 @@ namespace Yottabyte.Server.Controllers
             return UserToVM(user);
         }
 
+        /// <summary>
+        /// Funcion for updating the user info
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <param name="userIM">New info for the user</param>
+        /// <returns>is there a problem</returns>
         // PUT: api/Users/5
         [HttpPut("{id}")]
         public async Task<ActionResult<Response>> PutUser(int id, [FromForm] UserIM userIM)
@@ -184,6 +218,11 @@ namespace Yottabyte.Server.Controllers
             return Ok(new Response { Type = "user-update-succsess" });
         }
 
+        /// <summary>
+        /// Function for registering of event
+        /// </summary>
+        /// <param name="userIM">User info</param>
+        /// <returns>Was there a problem</returns>
         // POST: api/users/register
         [HttpPost("register")]
         [AllowAnonymous]
@@ -269,6 +308,12 @@ namespace Yottabyte.Server.Controllers
             return Ok(new Response { Type = "user-register-success"});
         }
 
+        /// <summary>
+        /// Function for generating JWT Token for the user
+        /// </summary>
+        /// <param name="Email">Email of the user</param>
+        /// <param name="Password">Password of the user</param>
+        /// <returns>Was there a problem</returns>
         // POST: api/users/login
         [HttpPost("login")]
         [AllowAnonymous]
@@ -319,6 +364,11 @@ namespace Yottabyte.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Function for deleting a user
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <returns>Was there a problem</returns>
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Response>> DeleteUser(int id)
@@ -364,11 +414,21 @@ namespace Yottabyte.Server.Controllers
             return Ok(new Response { Type = "user-deletion-success" });
         }
 
+        /// <summary>
+        /// Function for checking if user exists
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <returns>Does user exists</returns>
         private bool UserExists(int id)
         {
             return _context.User.Any(e => e.Id == id);
         }
 
+        /// <summary>
+        /// Converts user input model to user model
+        /// </summary>
+        /// <param name="userIM">User Input Model</param>
+        /// <returns>User</returns>
         private static User IMToUser(UserIM userIM) =>
             new()
             {
@@ -378,6 +438,11 @@ namespace Yottabyte.Server.Controllers
                 PasswordHash = userIM.Password
             };
 
+        /// <summary>
+        /// Converts user model to user view model
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>User View Model</returns>
         private static UserVM UserToVM(User user) =>
             new()
             {
@@ -388,6 +453,11 @@ namespace Yottabyte.Server.Controllers
                 AvatarURL = user.AvatarURL
             };
 
+        /// <summary>
+        /// Function for extracting the claims from JWT Token
+        /// </summary>
+        /// <param name="jwtToken">The JWT Token</param>
+        /// <returns>The claims</returns>
         public IEnumerable<Claim> ExtractClaims(string jwtToken)
         {
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

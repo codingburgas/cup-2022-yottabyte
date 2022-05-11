@@ -12,15 +12,28 @@ using System.IO;
 
 namespace Yottabyte.Client.Services
 {
+    /// <summary>
+    /// User services handler
+    /// </summary>
     public class UserServices : IUsersServices
     {
+        /// <summary>
+        /// HTTP client, which communicates with the HTTP Server
+        /// </summary>
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// Constructor for the user service
+        /// </summary>
+        /// <param name="clientFac">Client factory to get the HTTP client</param>
         public UserServices(IHttpClientFactory clientFac)
         {
             _httpClient = clientFac.CreateClient("ServerAPI");
         }
 
+        /// <summary>
+        /// Action for checking if a data needs to be updated in the DOM
+        /// </summary>
         public event Action OnChange;
 
         public async Task<String> CreateUser(UserIM user, Stream avatarStream, string filename)

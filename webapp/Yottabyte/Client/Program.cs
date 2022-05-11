@@ -16,6 +16,11 @@ namespace Yottabyte.Client
 {
     public class Program
     {
+        /// <summary>
+        /// Entry point for out http server
+        /// </summary>
+        /// <param name="args">Command line arguments</param>
+        /// <returns>Return code</returns>
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);

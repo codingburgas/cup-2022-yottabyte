@@ -28,14 +28,27 @@ using System.Globalization;
 
 namespace Yottabyte.Server.Controllers
 {
+    /// <summary>
+    /// Controler for the event management
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class EventsController : ControllerBase
     {
+        /// <summary>
+        /// The data contex from the EF
+        /// </summary>
         private readonly DataContext _context;
+
+        /// <summary>
+        /// The coniguration to get the secrets from the application.json
+        /// </summary>
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Dictionary for converting the file extension to connection type
+        /// </summary>
         public readonly Dictionary<string, string> fileExtToConType = new()
         {
              { ".png", "image/x-png" },
@@ -44,33 +57,21 @@ namespace Yottabyte.Server.Controllers
              { ".gif", "image/gif" }
         };
 
+        /// <summary>
+        /// Constructor for the Event Controller
+        /// </summary>
+        /// <param name="context">Data Context</param>
+        /// <param name="configuration">Configuration</param>
         public EventsController(DataContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
         }
 
-        // GET: api/events/auth
-        [HttpGet("auth")]
-        public async Task<ActionResult<IEnumerable<Event>>> GetAuthEvent()
-        {
-            return await _context.Event.ToListAsync();
-        }
-
-        // GET: api/events/auth/5
-        [HttpGet("auth/{id}")]
-        public async Task<ActionResult<Event>> GetAuthEvent(int id)
-        {
-            var @event = await _context.Event.FindAsync(id);
-
-            if (@event == null)
-            {
-                return NotFound();
-            }
-
-            return @event;
-        }
-
+        /// <summary>
+        /// Function to returns all of the events
+        /// </summary>
+        /// <returns>All of the events</returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvent()
@@ -78,6 +79,11 @@ namespace Yottabyte.Server.Controllers
             return await _context.Event.ToListAsync();
         }
 
+        /// <summary>
+        /// Functon to get a event with specific id
+        /// </summary>
+        /// <param name="id">Id of the event</param>
+        /// <returns>The event</returns>
         // GET: api/Events/5
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -93,6 +99,11 @@ namespace Yottabyte.Server.Controllers
             return @event;
         }
 
+        /// <summary>
+        /// Function for adding an event to the databas
+        /// </summary>
+        /// <param name="eventIm">Event input model</param>
+        /// <returns>Is there a problem</returns>
         // POST: api/events/createnewevent
         [HttpPost("createNewEvent")]
         public async Task<ActionResult<Response>> PostEvent([FromForm] EventIM eventIm)
@@ -275,6 +286,11 @@ namespace Yottabyte.Server.Controllers
             return Ok(new Response { Type = "event-create-success" });
         }
 
+        /// <summary>
+        /// Function for deleting a event with a specfic id
+        /// </summary>
+        /// <param name="id">Id of the event</param>
+        /// <returns>Was there a problem</returns>
         // DELETE: api/events/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Response>> DeleteEvent(int id)
@@ -316,11 +332,21 @@ namespace Yottabyte.Server.Controllers
             return Ok(new Response { Type = "event-deletion-success" });
         }
         
+        /// <summary>
+        /// Function for checking if a user exists
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <returns>Does the event exists</returns>
         private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.Id == id);
         }
 
+        /// <summary>
+        /// Function for converting a event input model to event model
+        /// </summary>
+        /// <param name="eventIM">Event input model</param>
+        /// <returns>The event in event model</returns>
         private static Event IMToEvent(EventIM eventIM) =>
           new()
           {
@@ -328,6 +354,12 @@ namespace Yottabyte.Server.Controllers
               Lat = eventIM.Lat
           };
 
+        /// <summary>
+        /// Create a custom prediction client
+        /// </summary>
+        /// <param name="endpoint">Your Custom Vision prediction API endpoint</param>
+        /// <param name="predictionKey">Your Custom Vision prediction key</param>
+        /// <returns></returns>
         private static CustomVisionPredictionClient AuthenticatePrediction(string endpoint, string predictionKey)
         {
             // Create a prediction endpoint, passing in the obtained prediction key
@@ -338,6 +370,11 @@ namespace Yottabyte.Server.Controllers
             return predictionApi;
         }
 
+        /// <summary>
+        /// Function for extracting the claims from JWT Token
+        /// </summary>
+        /// <param name="jwtToken">The JWT Token</param>
+        /// <returns>The claims</returns>
         public IEnumerable<Claim> ExtractClaims(string jwtToken)
         {
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

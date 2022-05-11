@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  ToastAndroid
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -20,6 +21,8 @@ import * as Location from "expo-location";
 import Svg, { Path, Circle } from "react-native-svg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 
 const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
 const API_ENDPOINT = SERVER_ENDPOINT + "/api";
@@ -27,7 +30,45 @@ const API_ENDPOINT = SERVER_ENDPOINT + "/api";
 <StatusBar translucent backgroundColor="transparent" />;
 const Stack = createBottomTabNavigator();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 function App() {
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -69,7 +110,7 @@ function App() {
         />
         <Stack.Screen
           name="   "
-          component={Notifications}
+          component={Notification}
           options={{
             tabBarLabel: " ",
             tabBarIcon: ({ color }) => (
@@ -151,11 +192,9 @@ function Map({ navigation }) {
   const [eventData, setEventData] = useState(null);
   useEffect(() => {
     const onEventsEnter = navigation.addListener("focus", () => {
-      console.log("fetch data for events");
       fetchEvents().then((eventsDataJSON) => {
         setEventData(eventsDataJSON);
         // markerCoordsLat = eventData[0].lat;
-        // console.log(eventData[0].lat);
         // markerCoordsLong = eventData[0].long;
       });
     });
@@ -189,7 +228,6 @@ function Map({ navigation }) {
     let name = event.location.split(",");
     let time = event.startTime.split("T");
     let location;
-    console.log(event.location.length);
     location =
       event.location.length > 30
         ? event.location.substr(0, 30) + "..."
@@ -377,7 +415,6 @@ function Events({ navigation }) {
     let name = event.location.split(",");
     let time = event.startTime.split("T");
     let location;
-    console.log(event.location.length);
     location =
       event.location.length > 30
         ? event.location.substr(0, 30) + "..."
@@ -469,7 +506,12 @@ function Events({ navigation }) {
               <Text style={styles.modalDate}>15 people are coming</Text>
               <Text style={styles.modalTime}>4 friends</Text>
             </View>
-            <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() =>
+                ToastAndroid.show("Coming soon", 2000)
+              }
+            >
               <Text style={styles.modalButtonText}>I’m in!</Text>
             </TouchableOpacity>
           </>
@@ -479,7 +521,7 @@ function Events({ navigation }) {
   );
 }
 
-function Notifications() {
+function Notification() {
   return (
     <>
       <Text>testink...</Text>
@@ -493,6 +535,59 @@ function User() {
       <Text>testink...</Text>
     </>
   );
+}
+
+// Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
+async function sendPushNotification(expoPushToken) {
+  const message = {
+    to: expoPushToken,
+    sound: "default",
+    title: "Original Title",
+    body: "And here is the body!",
+    data: { someData: "goes here" },
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
 }
 
 const styles = StyleSheet.create({

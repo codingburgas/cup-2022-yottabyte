@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  ToastAndroid
+  ToastAndroid,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -23,6 +23,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import RBSheet from "react-native-raw-bottom-sheet";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import Confetti from "react-native-confetti";
 
 const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
 const API_ENDPOINT = SERVER_ENDPOINT + "/api";
@@ -155,6 +156,7 @@ function Map({ navigation }) {
   const [modalLocation, setModalLocation] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const [modalTime, setModalTime] = useState(null);
+  let confettiView;
 
   useEffect(() => {
     (async () => {
@@ -338,9 +340,17 @@ function Map({ navigation }) {
               <Text style={styles.modalDate}>15 people are coming</Text>
               <Text style={styles.modalTime}>4 friends</Text>
             </View>
-            <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => {
+                if (confettiView) {
+                  confettiView.startConfetti();
+                }
+              }}
+            >
               <Text style={styles.modalButtonText}>I’m in!</Text>
             </TouchableOpacity>
+            <Confetti ref={(node) => (confettiView = node)} duration={2000} confettiCount={20} />
           </>
         )}
       </RBSheet>
@@ -508,9 +518,7 @@ function Events({ navigation }) {
             </View>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() =>
-                ToastAndroid.show("Coming soon", 2000)
-              }
+              onPress={() => ToastAndroid.show("Coming soon", 2000)}
             >
               <Text style={styles.modalButtonText}>I’m in!</Text>
             </TouchableOpacity>

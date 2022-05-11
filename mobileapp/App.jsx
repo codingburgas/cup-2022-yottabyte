@@ -11,6 +11,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ToastAndroid,
+  LogBox,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -22,6 +23,8 @@ import Svg, { Path, Circle } from "react-native-svg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Confetti from "react-native-confetti";
+LogBox.ignoreLogs(["Warning: ..."]);
+LogBox.ignoreAllLogs();
 
 const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
 const API_ENDPOINT = SERVER_ENDPOINT + "/api";
@@ -116,6 +119,7 @@ function Map({ navigation }) {
   const [modalLocation, setModalLocation] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const [modalTime, setModalTime] = useState(null);
+  const [modalParticipate, setModalParticipate] = useState("I’m in!");
   let confettiView;
 
   useEffect(() => {
@@ -227,6 +231,7 @@ function Map({ navigation }) {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
+        dragFromTopOnly={true}
         height={Dimensions.get("screen").height - 100}
         customStyles={{
           wrapper: {
@@ -245,73 +250,80 @@ function Map({ navigation }) {
       >
         {modalName != null && (
           <>
-            <Text style={styles.modalName}>{modalName}</Text>
-            <View style={styles.modalImageBox}>
-              <Image
-                source={{
-                  uri: `${modalImage}`,
+            <ScrollView>
+              <Text style={styles.modalName}>{modalName}</Text>
+              <View style={styles.modalImageBox}>
+                <Image
+                  source={{
+                    uri: `${modalImage}`,
+                  }}
+                  style={styles.modalImage}
+                />
+                <MaterialCommunityIcons
+                  name="map-marker"
+                  color="#245BF5"
+                  size={20}
+                  style={styles.modalIconLocation}
+                />
+                <Text style={styles.modalLocation}>{modalLocation}</Text>
+              </View>
+              <View style={styles.modalBox}>
+                <MaterialCommunityIcons
+                  name="clock-time-ten-outline"
+                  color="#245BF5"
+                  size={26}
+                  style={styles.modalIconTime}
+                />
+                <Text style={styles.modalDate}>{modalDate}</Text>
+                <Text style={styles.modalTime}>
+                  {modalTime.substr(0, 5)} - {modalTime.substr(0, 3) + 30}
+                </Text>
+                <View
+                  style={{
+                    borderBottomColor: "#E2E2E2",
+                    borderBottomWidth: 2,
+                  }}
+                />
+                <MaterialCommunityIcons
+                  name="trophy"
+                  color="#245BF5"
+                  size={26}
+                  style={styles.modalIconTime}
+                />
+                <Text style={styles.modalDate}>Award Presence</Text>
+                <Text style={styles.modalTime}>Built Different</Text>
+                <View
+                  style={{
+                    borderBottomColor: "#E2E2E2",
+                    borderBottomWidth: 2,
+                  }}
+                />
+                <MaterialCommunityIcons
+                  name="human-male-male"
+                  color="#245BF5"
+                  size={26}
+                  style={styles.modalIconTime}
+                />
+                <Text style={styles.modalDate}>15 people are coming</Text>
+                <Text style={styles.modalTime}>4 friends</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  if (confettiView) {
+                    if (modalParticipate != "Participating") {
+                      setModalParticipate("Participating");
+                      confettiView.startConfetti();
+                    } else {
+                      setModalParticipate("I’m in!");
+                    }
+                  }
                 }}
-                style={styles.modalImage}
-              />
-              <MaterialCommunityIcons
-                name="map-marker"
-                color="#245BF5"
-                size={20}
-                style={styles.modalIconLocation}
-              />
-              <Text style={styles.modalLocation}>{modalLocation}</Text>
-            </View>
-            <View style={styles.modalBox}>
-              <MaterialCommunityIcons
-                name="clock-time-ten-outline"
-                color="#245BF5"
-                size={26}
-                style={styles.modalIconTime}
-              />
-              <Text style={styles.modalDate}>{modalDate}</Text>
-              <Text style={styles.modalTime}>
-                {modalTime.substr(0, 5)} - {modalTime.substr(0, 3) + 30}
-              </Text>
-              <View
-                style={{
-                  borderBottomColor: "#E2E2E2",
-                  borderBottomWidth: 2,
-                }}
-              />
-              <MaterialCommunityIcons
-                name="trophy"
-                color="#245BF5"
-                size={26}
-                style={styles.modalIconTime}
-              />
-              <Text style={styles.modalDate}>Award Presence</Text>
-              <Text style={styles.modalTime}>Built Different</Text>
-              <View
-                style={{
-                  borderBottomColor: "#E2E2E2",
-                  borderBottomWidth: 2,
-                }}
-              />
-              <MaterialCommunityIcons
-                name="human-male-male"
-                color="#245BF5"
-                size={26}
-                style={styles.modalIconTime}
-              />
-              <Text style={styles.modalDate}>15 people are coming</Text>
-              <Text style={styles.modalTime}>4 friends</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                if (confettiView) {
-                  confettiView.startConfetti();
-                  ToastAndroid.show("Thank you for Participating!", 500);
-                }
-              }}
-            >
-              <Text style={styles.modalButtonText}>I’m in!</Text>
-            </TouchableOpacity>
+              >
+                <Text style={styles.modalButtonText}>{modalParticipate}</Text>
+              </TouchableOpacity>
+              <View style={styles.modalView}></View>
+            </ScrollView>
             <Confetti
               ref={(node) => (confettiView = node)}
               duration={2000}
@@ -332,6 +344,7 @@ function Events({ navigation }) {
   const [modalLocation, setModalLocation] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const [modalTime, setModalTime] = useState(null);
+  const [modalParticipate, setModalParticipate] = useState("I’m in!");
   let confettiView;
 
   useEffect(() => {
@@ -429,73 +442,80 @@ function Events({ navigation }) {
       >
         {modalName != null && (
           <>
-            <Text style={styles.modalName}>{modalName}</Text>
-            <View style={styles.modalImageBox}>
-              <Image
-                source={{
-                  uri: `${modalImage}`,
+            <ScrollView>
+              <Text style={styles.modalName}>{modalName}</Text>
+              <View style={styles.modalImageBox}>
+                <Image
+                  source={{
+                    uri: `${modalImage}`,
+                  }}
+                  style={styles.modalImage}
+                />
+                <MaterialCommunityIcons
+                  name="map-marker"
+                  color="#245BF5"
+                  size={20}
+                  style={styles.modalIconLocation}
+                />
+                <Text style={styles.modalLocation}>{modalLocation}</Text>
+              </View>
+              <View style={styles.modalBox}>
+                <MaterialCommunityIcons
+                  name="clock-time-ten-outline"
+                  color="#245BF5"
+                  size={26}
+                  style={styles.modalIconTime}
+                />
+                <Text style={styles.modalDate}>{modalDate}</Text>
+                <Text style={styles.modalTime}>
+                  {modalTime.substr(0, 5)} - {modalTime.substr(0, 3) + 30}
+                </Text>
+                <View
+                  style={{
+                    borderBottomColor: "#E2E2E2",
+                    borderBottomWidth: 2,
+                  }}
+                />
+                <MaterialCommunityIcons
+                  name="trophy"
+                  color="#245BF5"
+                  size={26}
+                  style={styles.modalIconTime}
+                />
+                <Text style={styles.modalDate}>Award Presence</Text>
+                <Text style={styles.modalTime}>Built Different</Text>
+                <View
+                  style={{
+                    borderBottomColor: "#E2E2E2",
+                    borderBottomWidth: 2,
+                  }}
+                />
+                <MaterialCommunityIcons
+                  name="human-male-male"
+                  color="#245BF5"
+                  size={26}
+                  style={styles.modalIconTime}
+                />
+                <Text style={styles.modalDate}>15 people are coming</Text>
+                <Text style={styles.modalTime}>4 friends</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  if (confettiView) {
+                    if (modalParticipate != "Participating") {
+                      setModalParticipate("Participating");
+                      confettiView.startConfetti();
+                    } else {
+                      setModalParticipate("I’m in!");
+                    }
+                  }
                 }}
-                style={styles.modalImage}
-              />
-              <MaterialCommunityIcons
-                name="map-marker"
-                color="#245BF5"
-                size={20}
-                style={styles.modalIconLocation}
-              />
-              <Text style={styles.modalLocation}>{modalLocation}</Text>
-            </View>
-            <View style={styles.modalBox}>
-              <MaterialCommunityIcons
-                name="clock-time-ten-outline"
-                color="#245BF5"
-                size={26}
-                style={styles.modalIconTime}
-              />
-              <Text style={styles.modalDate}>{modalDate}</Text>
-              <Text style={styles.modalTime}>
-                {modalTime.substr(0, 5)} - {modalTime.substr(0, 3) + 30}
-              </Text>
-              <View
-                style={{
-                  borderBottomColor: "#E2E2E2",
-                  borderBottomWidth: 2,
-                }}
-              />
-              <MaterialCommunityIcons
-                name="trophy"
-                color="#245BF5"
-                size={26}
-                style={styles.modalIconTime}
-              />
-              <Text style={styles.modalDate}>Award Presence</Text>
-              <Text style={styles.modalTime}>Built Different</Text>
-              <View
-                style={{
-                  borderBottomColor: "#E2E2E2",
-                  borderBottomWidth: 2,
-                }}
-              />
-              <MaterialCommunityIcons
-                name="human-male-male"
-                color="#245BF5"
-                size={26}
-                style={styles.modalIconTime}
-              />
-              <Text style={styles.modalDate}>15 people are coming</Text>
-              <Text style={styles.modalTime}>4 friends</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                if (confettiView) {
-                  confettiView.startConfetti();
-                  ToastAndroid.show("Thank you for Participating!", 500);
-                }
-              }}
-            >
-              <Text style={styles.modalButtonText}>I’m in!</Text>
-            </TouchableOpacity>
+              >
+                <Text style={styles.modalButtonText}>{modalParticipate}</Text>
+              </TouchableOpacity>
+              <View style={styles.modalView}></View>
+            </ScrollView>
             <Confetti
               ref={(node) => (confettiView = node)}
               duration={2000}
@@ -511,7 +531,7 @@ function Events({ navigation }) {
 function Notification() {
   return (
     <>
-      <Text>testink...</Text>
+      <Text style={styles.notification}>No notifications yet</Text>
     </>
   );
 }
@@ -519,7 +539,7 @@ function Notification() {
 function User() {
   return (
     <>
-      <Text>testink...</Text>
+      <Text style={styles.notification}>Coming soon</Text>
     </>
   );
 }
@@ -677,7 +697,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 28,
     top: 16,
-    left: "38%",
+    textAlign: "center",
     color: "white",
     fontWeight: "bold",
   },
@@ -704,6 +724,17 @@ const styles = StyleSheet.create({
     width: "82%",
     left: "9%",
     top: 20,
+  },
+
+  notification: {
+    textAlign: "center",
+    fontSize: 30,
+    top: "50%",
+    color: "#828282",
+  },
+
+  modalView: {
+    height: 1157 - Dimensions.get("screen").height - 100,
   },
 });
 

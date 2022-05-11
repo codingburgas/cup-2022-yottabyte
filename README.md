@@ -68,7 +68,11 @@
 
 <h3><B>Cloning the repository:</B></h3>
 
-<p>In the CMD enter this command:</p>
+You can start with downloading our project form [GitHub](https://github.com/codingburgas/cup-2022-yottabyte/archive/refs/heads/main.zip) by pressing the **green clone button**
+
+or...
+
+Pasting this line of code in **your favourite Terminal**:
 <pre>git clone https://github.com/codingburgas/cup-2022-yottabyte.git</pre>
 <p>You have successfully cloned the repository! 🥳</p>
 

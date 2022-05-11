@@ -14,7 +14,7 @@
 </p>
 
 ## 💻 About
-<p align="center">This is an application for the Imagine Junior Cup 2022 , meant to detect polluted beaches and organise clean up events through the power of AI.</p>
+<p align="center">This is an application for the Imagine Junior Cup 2022, meant to detect polluted beaches and organise clean up events through the power of AI.</p>
 
 ## 🗂️ Tech Stack:
 ### Used code editors for the project's realisation:

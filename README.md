@@ -1,8 +1,8 @@
 <h1 align="center">Team Yottabyte</h1>
 
 <p align = "center">
-    <img src="img/logos/lightBannerFinal.jpg#gh-light-mode-only"/>
-    <img src="img/logos/BlackBannerFinal.jpg#gh-dark-mode-only"/>
+    <img src="img/banners/yottabyte-banner-light.png#gh-light-mode-only" />
+    <img src="img/banners/yottabyte-banner-dark.png#gh-dark-mode-only"/>
 </p>
 
 <p align = "center">

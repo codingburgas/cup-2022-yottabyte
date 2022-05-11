@@ -236,7 +236,9 @@ function Map({ navigation }) {
             backgroundColor: "#6D6D6D",
           },
           container: {
-            borderRadius: 50,
+            borderTopLeftRadius: 50,
+            borderTopRightRadius: 50,
+            backgroundColor: "#FAFBFF",
           },
         }}
       >
@@ -398,13 +400,14 @@ function Events({ navigation }) {
         customStyles={{
           wrapper: {
             backgroundColor: "transparent",
-            borderRadius: 100,
           },
           draggableIcon: {
             backgroundColor: "#6D6D6D",
           },
           container: {
-            borderRadius: 50,
+            borderTopLeftRadius: 50,
+            borderTopRightRadius: 50,
+            backgroundColor: "#FAFBFF",
           },
         }}
       >

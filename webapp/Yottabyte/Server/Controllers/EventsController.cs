@@ -24,6 +24,7 @@ using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction;
 using Yottabyte.Shared;
 using TimeZoneConverter;
 using Yottabyte.Server.Data;
+using System.Globalization;
 
 namespace Yottabyte.Server.Controllers
 {
@@ -92,38 +93,6 @@ namespace Yottabyte.Server.Controllers
             return @event;
         }
 
-        /*
-        // PUT: api/Events/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvent(int id, Event @event)
-        {
-            if (id != @event.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(@event).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EventExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-         */
         // POST: api/events/createnewevent
         [HttpPost("createNewEvent")]
         public async Task<ActionResult<Response>> PostEvent([FromForm] EventIM eventIm)
@@ -154,7 +123,7 @@ namespace Yottabyte.Server.Controllers
 
             if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
             {
-                return BadRequest(new Response { Type = "user-update-failure", Data = "The file extension of the image is invalid" });
+                return BadRequest(new Response { Type = "event-create-failure", Data = "The file extension of the image is invalid" });
             }
 
             // Send the image to the Azure Custom Vision API Endpoint            
@@ -192,8 +161,8 @@ namespace Yottabyte.Server.Controllers
 
             var searchReverseRequest = new SearchNearbyRequest
             {
-                Lat = Double.Parse(@event.Lat),
-                Lon = Double.Parse(@event.Long),
+                Lat = Double.Parse(@event.Lat, CultureInfo.InvariantCulture),
+                Lon = Double.Parse(@event.Long, CultureInfo.InvariantCulture),
                 Language = "en_EN"
             };
 
@@ -256,7 +225,7 @@ namespace Yottabyte.Server.Controllers
             if (localDatetime.DayOfWeek == DayOfWeek.Sunday)
             {
                 // Skip to the next week
-                localDatetime = localDatetime.AddDays(6);
+                @event.StartTime = localDatetime.AddDays(6);
             }
             else
             {

@@ -21,8 +21,6 @@ import * as Location from "expo-location";
 import Svg, { Path, Circle } from "react-native-svg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
-import * as Notifications from "expo-notifications";
-import * as Device from "expo-device";
 import Confetti from "react-native-confetti";
 
 const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
@@ -31,45 +29,7 @@ const API_ENDPOINT = SERVER_ENDPOINT + "/api";
 <StatusBar translucent backgroundColor="transparent" />;
 const Stack = createBottomTabNavigator();
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
 function App() {
-  const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
-
-    // This listener is fired whenever a notification is received while the app is foregrounded
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
-
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -234,11 +194,12 @@ function Map({ navigation }) {
       event.location.length > 30
         ? event.location.substr(0, 30) + "..."
         : event.location;
+    let localdate = new Date(event.startTime + "Z");
     setModalName(name[2]);
     setModalImage(event.imageURL);
     setModalLocation(location);
-    setModalDate(time[0]);
-    setModalTime(time[1]);
+    setModalDate(localdate.toLocaleDateString());
+    setModalTime(localdate.toLocaleTimeString());
   };
 
   return (
@@ -345,12 +306,17 @@ function Map({ navigation }) {
               onPress={() => {
                 if (confettiView) {
                   confettiView.startConfetti();
+                  ToastAndroid.show("Thank you for Participating!", 500);
                 }
               }}
             >
               <Text style={styles.modalButtonText}>I’m in!</Text>
             </TouchableOpacity>
-            <Confetti ref={(node) => (confettiView = node)} duration={2000} confettiCount={20} />
+            <Confetti
+              ref={(node) => (confettiView = node)}
+              duration={2000}
+              confettiCount={20}
+            />
           </>
         )}
       </RBSheet>
@@ -366,6 +332,7 @@ function Events({ navigation }) {
   const [modalLocation, setModalLocation] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const [modalTime, setModalTime] = useState(null);
+  let confettiView;
 
   useEffect(() => {
     const onEventsEnter = navigation.addListener("focus", () => {
@@ -381,7 +348,7 @@ function Events({ navigation }) {
   if (eventData != null) {
     eventData.forEach((event) => {
       let name = event.location.split(",");
-      let time = event.startTime.split("T");
+      let localdate = new Date(event.startTime + "Z");
       events.push(
         <View style={styles.eventContainer}>
           <Image
@@ -406,7 +373,7 @@ function Events({ navigation }) {
             size={13}
             style={styles.eventIconTime}
           />
-          <Text style={styles.eventTime}>{time[1]}</Text>
+          <Text style={styles.eventTime}>{localdate.toLocaleTimeString()}</Text>
           <TouchableOpacity
             style={styles.eventButton}
             onPress={() => {
@@ -429,11 +396,12 @@ function Events({ navigation }) {
       event.location.length > 30
         ? event.location.substr(0, 30) + "..."
         : event.location;
+    let localdate = new Date(event.startTime + "Z");
     setModalName(name[2]);
     setModalImage(event.imageURL);
     setModalLocation(location);
-    setModalDate(time[0]);
-    setModalTime(time[1]);
+    setModalDate(localdate.toLocaleDateString());
+    setModalTime(localdate.toLocaleTimeString());
   };
 
   return (
@@ -443,6 +411,7 @@ function Events({ navigation }) {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
+        dragFromTopOnly={true}
         height={Dimensions.get("screen").height - 100}
         customStyles={{
           wrapper: {
@@ -518,10 +487,20 @@ function Events({ navigation }) {
             </View>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => ToastAndroid.show("Coming soon", 2000)}
+              onPress={() => {
+                if (confettiView) {
+                  confettiView.startConfetti();
+                  ToastAndroid.show("Thank you for Participating!", 500);
+                }
+              }}
             >
               <Text style={styles.modalButtonText}>I’m in!</Text>
             </TouchableOpacity>
+            <Confetti
+              ref={(node) => (confettiView = node)}
+              duration={2000}
+              confettiCount={20}
+            />
           </>
         )}
       </RBSheet>
@@ -543,59 +522,6 @@ function User() {
       <Text>testink...</Text>
     </>
   );
-}
-
-// Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
-async function sendPushNotification(expoPushToken) {
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: "Original Title",
-    body: "And here is the body!",
-    data: { someData: "goes here" },
-  };
-
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
-  });
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
-
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  return token;
 }
 
 const styles = StyleSheet.create({

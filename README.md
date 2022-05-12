@@ -97,7 +97,7 @@ Pasting this line of code in **your favourite Terminal**:
 <ul>
   <li>You can paste this link in your URL bar of your preferred browser:</li>
 </ul>
-<pre>*github pages domain goes here*</pre>
+<pre>https://yottabyte.azurewebsites.net/</pre>
 
 <p>or...</p>
 

@@ -1,14 +1,8 @@
 # Documentation 
 ## Information and development of a plan
 ### Presentation of the project
+### Ще го оправя след часа по мат -> Тоест 13:00
 Our goal for the project was to create an application that both students and teachers would benefit from. The main idea is that our program can be used as a learning application for any subject, but given that our topic is biology, we have mainly focused on that aspect.
-
-### Roles in the team
-Yoanna Simeonova - [YVSimeonova19](https://github.com/YVSimeonova19) - Scrum trainer  
-Veselin Stoyanov - [VNStoyanov19](https://github.com/VNStoyanov19) - Front-end Developer  
-Stoyan Ivanov - [SSIvanov19](https://github.com/SSIvanov19) -  Back-end Developer  
-Tereza Opanska - [TNOpanska19](https://github.com/TNOpanska19) - Back-end Developer  
-Kostadin Taligadzhiev - [KNTaligadzhiev19](https://github.com/KNTaligadzhiev19) - QA Engineer
 
 ### Introduction
 #### What is the product?
@@ -16,7 +10,7 @@ The product is a C++ console application for helping students and teachers with 
 #### Where is it available?
 Our collaborative work took place in GitHub. The files were uploaded in the GitHub Repository of our project so they can be accessible for everyone. You can download the latest release from [GitHub releases](https://github.com/SSIvanov19/lathraea-rhodopaea/releases/download/v1.0.0/Release.zip) or the [download section](DOWNLOAD.md).
 #### Communication?
-Communication is realised through Teams and Discord. Thanks to all the features and the provided visualization - on-screen communication and feedback are sufficiently complete.
+Communication is realised through Teams. Thanks to all the features and the provided visualization - on-screen communication and feedback are sufficiently complete.
 #### What technologies are used?
 The technologies we used are C++ as the programming language with which the code is written, Git and GitHub for collaborative work, Visual Studio 2019 - as an IDE, Teams and Discord - connection and communication, PowerPoint and Word - for presentation and word documentation and Doxygen - for doxygen documentation.
 

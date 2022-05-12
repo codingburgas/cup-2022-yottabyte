@@ -1,12 +1,13 @@
 # How to install
-## Build from source
-0. Make sure you have Visual Studio 2019 installed.
+## Build the WebApp from source
+### Ще го оправя след часа по мат -> Тоест 13:00
+0. Make sure you have Visual Studio 2019 installed with ASP.NET and web development workload.
 1. Clone the repository.
     -   Open your favourite terminal and navigate to the directory where you want to clone the repository.
-    -   Type: `git clone https://github.com/SSIvanov19/lathraea-rhodopaea.git`
-2. Open the `lathraea-rhodopaea` directory.
-3. To lunch the VS Solution click on `lathraea-rhodopaea.sln`.
-4. Before running the project please make sure that you have created a `.env` file in the root directory of the solution.
+    -   Type: `git clone https://github.com/codingburgas/cup-2022-yottabyte.git`
+2. Open the `cup-2022-yottabyte\webapp` directory.
+3. To lunch the VS Solution click on `Yottabyte.sln`.
+4. Before running the project please make sure that you have created a `.appsetting` file in the root directory of the solution. Трябва да го довърша
   - `ADMIN_USERNAME` - the username of the admin
   - `ADMIN_EMAIL` - the email of the admin
   - `ADMIN_PASSWORD` - the password of the admin

@@ -10,19 +10,17 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  ToastAndroid,
   LogBox,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import Svg, { Path, Circle } from "react-native-svg";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Confetti from "react-native-confetti";
+
 LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs();
 
@@ -108,12 +106,10 @@ function App() {
 }
 
 function Map({ navigation }) {
+  const refRBSheet = useRef();
   const [location, setLocation] = useState(null);
   const [userLocationLat, setUserLocationLat] = useState(0);
   const [userLocationLong, setUserLocationLong] = useState(0);
-  let markerCoordsLat = 0;
-  let markerCoordsLong = 0;
-  const refRBSheet = useRef();
   const [modalName, setModalName] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [modalLocation, setModalLocation] = useState(null);
@@ -160,8 +156,6 @@ function Map({ navigation }) {
     const onEventsEnter = navigation.addListener("focus", () => {
       fetchEvents().then((eventsDataJSON) => {
         setEventData(eventsDataJSON);
-        // markerCoordsLat = eventData[0].lat;
-        // markerCoordsLong = eventData[0].long;
       });
     });
     return onEventsEnter;
@@ -183,7 +177,7 @@ function Map({ navigation }) {
         >
           <Image
             source={require("./assets/images/markerImage.png")}
-            style={{ height: 20, width: 20 }}
+            style={{ height: 25, width: 25 }}
           />
         </Marker>
       );
@@ -337,8 +331,8 @@ function Map({ navigation }) {
 }
 
 function Events({ navigation }) {
-  const [eventData, setEventData] = useState(null);
   const refRBSheet = useRef();
+  const [eventData, setEventData] = useState(null);
   const [modalName, setModalName] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [modalLocation, setModalLocation] = useState(null);
@@ -544,6 +538,33 @@ function User() {
   );
 }
 
+
+function toURLEncoded(data) {
+  return Object.keys(data)
+    .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+    .join("&");
+}
+
+async function fetchAPI(endpoint, data = {}, headers = {}, method = "GET") {
+  let response = await fetch("https:" + API_ENDPOINT + endpoint, {
+    method,
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/form-data",
+      ...headers,
+    },
+    body: method === "GET" ? null : toURLEncoded(data),
+  });
+  return response.json();
+}
+
+async function fetchEvents(token) {
+  return new Promise((res, rej) => {
+    fetchAPI("/events/").then(res).catch(rej);
+  });
+}
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -690,7 +711,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 2.22,
-
+    zIndex : 1,
     elevation: 8,
   },
 
@@ -737,30 +758,5 @@ const styles = StyleSheet.create({
     height: 1157 - Dimensions.get("screen").height - 100,
   },
 });
-
-function toURLEncoded(data) {
-  return Object.keys(data)
-    .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-    .join("&");
-}
-
-async function fetchAPI(endpoint, data = {}, headers = {}, method = "GET") {
-  let response = await fetch("https:" + API_ENDPOINT + endpoint, {
-    method,
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/form-data",
-      ...headers,
-    },
-    body: method === "GET" ? null : toURLEncoded(data),
-  });
-  return response.json();
-}
-
-async function fetchEvents(token) {
-  return new Promise((res, rej) => {
-    fetchAPI("/events/").then(res).catch(rej);
-  });
-}
 
 export default App;

@@ -20,6 +20,7 @@ import * as Location from "expo-location";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Confetti from "react-native-confetti";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs();
@@ -30,8 +31,31 @@ const API_ENDPOINT = SERVER_ENDPOINT + "/api";
 <StatusBar translucent backgroundColor="transparent" />;
 const Stack = createBottomTabNavigator();
 
+const UserContext = React.createContext(null);
+
 function App() {
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  const fetchState = () => {
+    AsyncStorage.getItem("logIn").then((value) => {
+      setIsAuthed(!!value);
+    });
+  }
+  fetchState();
+
+  
+  const onDone = () => {
+    AsyncStorage.setItem("logIn", "true").then(() => {
+      setIsAuthed(true);
+    });
+  };
+
   return (
+    <UserContext.Provider value={{
+      userData: null,
+      token: null,
+      isAuthed: false
+    }}>
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Feed"
@@ -101,7 +125,8 @@ function App() {
           }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+      </UserContext.Provider>
   );
 }
 
@@ -163,9 +188,10 @@ function Map({ navigation }) {
 
   let markerList = [];
   if (eventData != null) {
-    eventData.forEach((event) => {
+    eventData.forEach((event, idx) => {
       markerList.push(
         <Marker
+          key={idx}
           coordinate={{
             latitude: parseFloat(event.lat),
             longitude: parseFloat(event.long),
@@ -353,11 +379,11 @@ function Events({ navigation }) {
   let events = [];
 
   if (eventData != null) {
-    eventData.forEach((event) => {
+    eventData.forEach((event, idx) => {
       let name = event.location.split(",");
       let localdate = new Date(event.startTime + "Z");
       events.push(
-        <View style={styles.eventContainer}>
+        <View key={idx} style={styles.eventContainer}>
           <Image
             source={{
               uri: `${event.imageURL}`,

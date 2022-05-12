@@ -137,16 +137,6 @@ Pasting this line of code in **your favourite Terminal**:
   <li>You will be notified via email once the app launches globally! ⏳</li>
 </ol>
 
-
-## 🧒 Our Team
-
-- <a href = "https://github.com/SSIvanov19"> Stoyan Ivanov </a>
-- <a href = "https://github.com/MCBerberov19"> Mario Berberov </a>
-- <a href = "https://github.com/SSUzunov19"> Stas Uzunov </a>
-- <a href = "https://github.com/BNSavov19"> Boris Savov </a>
-- <a href = "https://github.com/VTIvanov20"> Valeri Ivanov </a>
-- <a href = "https://github.com/KNTaligadzhiev19"> Kostadin Taligadzhiev </a>
-
 <hr>
 
 ## <p align = "center">Made with ❤️ by team Yottabyte for <B>Imagine Cup Junior 2022!</B></p>

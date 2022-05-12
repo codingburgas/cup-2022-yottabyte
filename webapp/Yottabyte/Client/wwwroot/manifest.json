@@ -7,7 +7,7 @@
   "theme_color": "#03173d",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "https://raw.githubusercontent.com/codingburgas/cup-2022-yottabyte/main/mobileapp/assets/logo.png",
       "type": "image/png",
       "sizes": "512x512"
     }

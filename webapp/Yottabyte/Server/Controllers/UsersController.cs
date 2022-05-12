@@ -63,6 +63,24 @@ namespace Yottabyte.Server.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet("@me")]
+        public async Task<ActionResult<UserVM>> GetUserId()
+        {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var claims = ExtractClaims(token);
+
+            int reqUserId = Int32.Parse(claims.ToArray()[0].Value);
+
+             var user = await _context.User.FindAsync(reqUserId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return UserToVM(user);
+        }
+
         /// <summary>
         /// Function to returns all of the users
         /// </summary>

@@ -65,7 +65,7 @@
 
 ## 📄 Documents
 ### Presentation:
-- [PowerPoint]()
+- [PowerPoint](https://codingburgas-my.sharepoint.com/:p:/g/personal/ssuzunov19_codingburgas_bg/EdtHnvF_eBRDgTimd6YhnlgBV93HmhUdw2De2wfXAXk-aw?rtime=PKwUuX412kg)
 ### Video:
   - [Yottabyte Video](https://www.youtube.com/watch?v=5jWzU-tJkiE&ab_channel=Yottabyte)
 ### Code Documentation:

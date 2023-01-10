@@ -73,7 +73,7 @@
   - [Yottabyte Video](https://www.youtube.com/watch?v=5jWzU-tJkiE&ab_channel=Yottabyte)
 ### Code Documentation:
 - [Doxygen](https://ssivanov19.github.io/yottabyte-docs/)
-### QA Documenatation:
+### API Documenatation:
 - [Postman](https://documenter.getpostman.com/view/14581342/UyxgHncX)
 
 ## 📥 Installation & Set Up

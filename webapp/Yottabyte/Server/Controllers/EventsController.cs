@@ -323,7 +323,7 @@ namespace Yottabyte.Server.Controllers
             containerClient.CreateIfNotExists();
 
             // This should be dynamic calculated
-            BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(@event.ImageURL[77..]);
+            BlockBlobClient blockBlobClient = containerClient.GetBlockBlobClient(@event.ImageURL[66..]);
             await blockBlobClient.DeleteAsync();
 
             _context.Event.Remove(@event);

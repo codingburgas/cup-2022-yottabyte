@@ -16,6 +16,7 @@ using Azure.Storage.Queues;
 using Azure.Storage.Blobs;
 using Azure.Core.Extensions;
 using System;
+using Tailwind;
 
 namespace Yottabyte.Server
 {
@@ -82,6 +83,7 @@ namespace Yottabyte.Server
             {
                 app.UseDeveloperExceptionPage();
                 app.UseWebAssemblyDebugging();
+                app.RunTailwind("tailwind", "../Client/");
             }
             else
             {

@@ -513,40 +513,6 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
-.container {
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
-}
-
 .absolute {
   position: absolute;
 }
@@ -587,6 +553,14 @@ video {
   display: none;
 }
 
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-6 {
+  height: 1.5rem;
+}
+
 .h-screen {
   height: 100vh;
 }
@@ -599,8 +573,16 @@ video {
   width: 33.333333%;
 }
 
+.w-12 {
+  width: 3rem;
+}
+
 .w-4\/5 {
   width: 80%;
+}
+
+.w-6 {
+  width: 1.5rem;
 }
 
 .w-\[28\%\] {
@@ -615,12 +597,20 @@ video {
   width: 90%;
 }
 
-.w-\[100\%\] {
-  width: 100%;
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
 }
 
-.w-full {
-  width: 100%;
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
 
 .select-none {
@@ -629,8 +619,16 @@ video {
           user-select: none;
 }
 
+.flex-row {
+  flex-direction: row;
+}
+
 .flex-col {
   flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .items-center {
@@ -641,21 +639,34 @@ video {
   justify-content: center;
 }
 
-.rounded-\[93px\] {
-  border-radius: 93px;
+.place-self-end {
+  place-self: end;
+}
+
+.self-end {
+  align-self: flex-end;
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth;
 }
 
 .rounded-\[7px\] {
   border-radius: 7px;
 }
 
-.border {
-  border-width: 1px;
+.rounded-\[93px\] {
+  border-radius: 93px;
 }
 
 .bg-\[\#2989E1\] {
   --tw-bg-opacity: 1;
   background-color: rgb(41 137 225 / var(--tw-bg-opacity));
+}
+
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 .bg-\[url\(\'\.\.\/img\/ai-gradient\.png\'\)\] {
@@ -664,6 +675,12 @@ video {
 
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-\[\#00A3FF\] {
+  --tw-gradient-from: #00A3FF;
+  --tw-gradient-to: rgb(0 163 255 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
 .from-\[\#4FD8E0\] {
@@ -678,10 +695,8 @@ video {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.from-\[\#00A3FF\] {
-  --tw-gradient-from: #00A3FF;
-  --tw-gradient-to: rgb(0 163 255 / 0);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+.to-\[\#0038FF\] {
+  --tw-gradient-to: #0038FF;
 }
 
 .to-\[\#4FB5E0\] {
@@ -690,10 +705,6 @@ video {
 
 .to-\[\#8321FF\] {
   --tw-gradient-to: #8321FF;
-}
-
-.to-\[\#0038FF\] {
-  --tw-gradient-to: #0038FF;
 }
 
 .bg-cover {
@@ -717,20 +728,24 @@ video {
   background-repeat: no-repeat;
 }
 
-.pl-\[1vw\] {
-  padding-left: 1vw;
+.p-2 {
+  padding: 0.5rem;
+}
+
+.pb-20 {
+  padding-bottom: 5rem;
 }
 
 .pl-\[0\.7\%\] {
   padding-left: 0.7%;
 }
 
-.pr-\[0\.7\%\] {
-  padding-right: 0.7%;
+.pl-\[1vw\] {
+  padding-left: 1vw;
 }
 
-.pb-20 {
-  padding-bottom: 5rem;
+.pr-\[0\.7\%\] {
+  padding-right: 0.7%;
 }
 
 .pt-20 {
@@ -809,9 +824,21 @@ video {
   color: transparent;
 }
 
+.text-violet-500 {
+  --tw-text-opacity: 1;
+  color: rgb(139 92 246 / var(--tw-text-opacity));
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+@media (prefers-color-scheme: dark) {
+  .dark\:bg-slate-800 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+  }
 }
 
 @media (min-width: 768px) {
@@ -849,6 +876,10 @@ video {
     width: 100%;
   }
 
+  .xl\:w-\[130rem\] {
+    width: 130rem;
+  }
+
   .xl\:w-\[32rem\] {
     width: 32rem;
   }
@@ -861,18 +892,6 @@ video {
     width: 65rem;
   }
 
-  .xl\:w-\[85rem\] {
-    width: 85rem;
-  }
-
-  .xl\:w-\[78\%\] {
-    width: 78%;
-  }
-
-  .xl\:w-\[130rem\] {
-    width: 130rem;
-  }
-
   .xl\:flex-row {
     flex-direction: row;
   }
@@ -883,6 +902,10 @@ video {
 
   .xl\:justify-start {
     justify-content: flex-start;
+  }
+
+  .xl\:place-self-auto {
+    place-self: auto;
   }
 
   .xl\:bg-\[url\(\'\.\.\/img\/side-gradient\.png\'\)\] {

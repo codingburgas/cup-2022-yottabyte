@@ -1,7 +1,7 @@
 ﻿@page "/"
 
-<section class="h-screen xl:bg-[url('../img/side-gradient.png')] bg-no-repeat bg-right flex justify-center xl:justify-start">
-    <div class="flex xl:ml-[5%]">
+<section class="h-screen xl:bg-[url('../img/side-gradient.png')] bg-no-repeat bg-right flex justify-center xl:justify-start flex-row flex-wrap">
+    <div class="flex xl:ml-[5%] place-self-end xl:place-self-auto">
         <div class="xl:mt-[5vh] flex flex-col justify-center items-center xl:items-start">
             <h1 class="w-[90%] xl:w-[45vw] text-[#001854] font-inter not-italic font-bold text-[3rem] md:text-[4rem] xl:text-[5.5rem] leading-[3.3rem] md:leading-[5rem] select-none text-center xl:text-start">Спасете бъдещето чрез силата на <span class="inline bg-clip-text text-transparent bg-center bg-cover bg-[url('../img/ai-gradient.png')]">Изкуствения Интелект</span>.</h1>
             <button class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#61B3FF] to-[#8321FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
@@ -16,17 +16,24 @@
             <img draggable="false" class="absolute select-none ml-[7vw] top-[10%] z-1 w-[28%]" src="img/mockup.png" />
         </div>
     </div>
+    <button class="flex justify-center self-end mb-5" onclick="document.getElementById('secondSection').scrollIntoView({behavior:'smooth'})">
+        <div class="animate-bounce bg-white dark:bg-slate-800 p-2 w-12 h-10  flex items-center justify-center">
+            <svg lass="w-6 h-6 text-violet-500" width="62" height="31" viewBox="0 0 62 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.94135 1.39594C3.73098 -0.0105391 6.25006 -0.0118731 8.04119 1.39271L27.9146 16.9772C29.7262 18.3979 32.2738 18.3979 34.0854 16.9772L53.9588 1.39271C55.7499 -0.0118741 58.269 -0.0105386 60.0587 1.39594C62.5749 3.37348 62.5749 7.18523 60.0587 9.16276L34.0896 29.5719C32.2763 30.9969 29.7237 30.9969 27.9104 29.5719L1.94135 9.16276C-0.574917 7.18523 -0.574916 3.37348 1.94135 1.39594Z" fill="#252B60" />
+            </svg>
+        </div>
+    </button>
 </section>
 
 
-<section >
+<section id="secondSection">
     <div class="flex mt-[10%] flex-col xl:flex-row">
         <div class="xl:pl-16 xl:pr-5 flex justify-center items-center mb-5">
             <img src="img/photo.png" draggable="false" class="select-none w-4/5 xl:w-[65rem]" />
         </div>
 
         <div class="xl:pl-5 xl:pr-16 xl:items-start flex justify-center items-center flex-col">
-            <p class="font-inter text-[#001754] text-[4vw] font-semibold xl:mb-0 mb-3 ">Събирма снимки</p>
+            <p class="font-inter text-[#001754] text-[4vw] font-semibold xl:mb-0 mb-3 ">Събира снимки</p>
             <p class="text-[#525252] text-[2.5vw] xl:text-justify xl:w-[100%] w-4/5 text-center">Използват се различни изображения, за да се установи дали плажът е замърсен или не.</p>
         </div>
     </div>

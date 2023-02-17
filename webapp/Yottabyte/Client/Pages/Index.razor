@@ -1,197 +1,89 @@
 ﻿@page "/"
 
-<section class="hero is-fullheight" style="background-image: url('img/side-gradient.png'); background-repeat: no-repeat; background-position: right;">
-
-        <div class="hero-body" style="margin-left: 5%;">
-
-            <div class="heading-main column">
-                <h1 style="font-size: 5vw;">Save your future through the power of <span class="ai-text">AI</span>.</h1>
-
-                <button class="start-now-button">
-                    Start now
-                    <svg class="button-arrow-svg" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="column" >
-                <img class="mockup-devices" src="img/mockup.png" />
-            </div>
-
+<section class="h-screen xl:bg-[url('../img/side-gradient.png')] bg-no-repeat bg-right flex justify-center xl:justify-start flex-row flex-wrap">
+    <div class="flex xl:ml-[5%] place-self-end xl:place-self-auto">
+        <div class="xl:mt-[5vh] flex flex-col justify-center items-center xl:items-start">
+            <h1 class="w-[90%] xl:w-[45vw] text-[#001854] font-inter not-italic font-bold text-[3rem] md:text-[4rem] xl:text-[5.5rem] leading-[3.3rem] md:leading-[5rem] select-none text-center xl:text-start">Спасете бъдещето чрез силата на <span class="inline bg-clip-text text-transparent bg-center bg-cover bg-[url('../img/ai-gradient.png')]">Изкуствения Интелект</span>.</h1>
+            <button class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#61B3FF] to-[#8321FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
+            Започни сега
+                <svg class="inline pl-[1vw] w-[2vw]" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
+                </svg>
+            </button>
         </div>
 
+        <div class="hidden xl:block">
+            <img draggable="false" class="absolute select-none ml-[7vw] top-[10%] z-1 w-[28%]" src="img/mockup.png" />
+        </div>
+    </div>
+    <button class="flex justify-center self-end mb-5" onclick="document.getElementById('secondSection').scrollIntoView({behavior:'smooth'})">
+        <div class="animate-bounce bg-white dark:bg-slate-800 p-2 w-12 h-10  flex items-center justify-center">
+            <svg lass="w-6 h-6 text-violet-500" width="62" height="31" viewBox="0 0 62 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.94135 1.39594C3.73098 -0.0105391 6.25006 -0.0118731 8.04119 1.39271L27.9146 16.9772C29.7262 18.3979 32.2738 18.3979 34.0854 16.9772L53.9588 1.39271C55.7499 -0.0118741 58.269 -0.0105386 60.0587 1.39594C62.5749 3.37348 62.5749 7.18523 60.0587 9.16276L34.0896 29.5719C32.2763 30.9969 29.7237 30.9969 27.9104 29.5719L1.94135 9.16276C-0.574917 7.18523 -0.574916 3.37348 1.94135 1.39594Z" fill="#252B60" />
+            </svg>
+        </div>
+    </button>
 </section>
 
-<section style="margin-left: 5%; margin-top: 5%;">
-    <div class="tile is-ancestor">
-        <div class="tile is-5 is-vertical is-parent">
-            <div class="tile is-child">
-                <img src="img/photo.png" />
-            </div>
+
+<section id="secondSection">
+    <div class="flex mt-[10%] flex-col xl:flex-row">
+        <div class="xl:pl-16 xl:pr-5 flex justify-center items-center mb-5">
+            <img src="img/photo.png" draggable="false" class="select-none w-4/5 xl:w-[65rem]" />
         </div>
 
-        <div class="tile is-parent" style="margin-left: 5%; display: flex; align-items: center;">
-            <div class="tile is-child">
-                <p class="title" style="font-size: 4.5vw;">Gather imagery</p>
-                <p style="font-size: 2.5vw;">Various images will be used to detect whether a beach is polluted or not.</p>
-            </div>
+        <div class="xl:pl-5 xl:pr-16 xl:items-start flex justify-center items-center flex-col">
+            <p class="font-inter text-[#001754] text-[4vw] font-semibold xl:mb-0 mb-3 ">Събира снимки</p>
+            <p class="text-[#525252] text-[2.5vw] xl:text-justify xl:w-[100%] w-4/5 text-center">Използват се различни изображения, за да се установи дали плажът е замърсен или не.</p>
         </div>
     </div>
 
-    <div class="tile is-ancestor" style="margin-top: 5%; display: flex; align-items: center; justify-content: center;">
-        <div class="tile is-parent">
-            <div class="tile is-child">
-                <p class="title" style="font-size: 4.5vw;">Process information</p>
-                <p style="font-size: 2.5vw;">The data passes through our machine learning agorithm and gets split to events.</p>
-            </div>
+    <div class="flex mt-[10%] flex-col xl:flex-row">
+        <div class="xl:pr-5 xl:pl-16 flex justify-center items-center flex-col xl:items-start">
+            <p class="font-inter text-[#001754] text-[4vw] font-semibold xl:mb-0 mb-3 ">Сървърът обработва информацията</p>
+            <p class="text-[#525252] text-[2.5vw] xl:text-justify w-4/5 text-center">Данните преминават през нашия агоритъм и се създават събития.</p>
         </div>
-
-        <div class="tile is-5 is-vertical is-parent" style="margin-left: 5%;">
-            <div class="tile is-child">
-                <img src="img/Layer 2 1.png" />
-            </div>
+        
+        <div class="xl:pr-16 xl:pl-5 flex justify-center items-center mb-5">
+            <img src="img/Layer 2 1.png" draggable="false" class="select-none w-1/3 xl:w-[32rem]" />
         </div>
     </div>
 
-    <div class="tile is-ancestor" style="margin-top: 5%; display: flex; align-items: center; justify-content: center;">
-        <div class="tile is-5 is-vertical is-parent">
-            <div class="tile is-child">
-                <img src="img/Group 76.png" />
-            </div>
+    <div class="flex mt-[10%] flex-col xl:flex-row">
+        <div class="xl:pl-16 xl:pr-5 flex justify-center items-center mb-5">
+            <img src="img/Group 76.png" draggable="false" class="select-none w-4/5 xl:w-[65rem]" />
         </div>
 
-        <div class="tile is-parent"style="margin-left: 5%;">
-            <div class="tile is-child">
-                <p class="title" style="font-size: 4.5vw;">Engage people</p>
-                <p style="font-size: 2.5vw;">At last, the events gets assigned to various users, that organise meet ups.</p>
-            </div>
+        <div class="xl:pl-5 xl:pr-16 flex justify-center items-center flex-col">
+            <p class="font-inter text-[#001754] text-[4vw] font-semibold xl:mb-0 mb-3 ">Заедно за по-добро бъдеще</p>
+            <p class="text-[#525252] text-[2.5vw] xl:text-justify xl:w-[100%] w-4/5 text-center">Най-накрая се създават събития, където всеки може да дойде и да изчисти плажа.</p>
         </div>
     </div>
 </section>
-
 <section>
-    <div class="tile is-ancestor" style="margin-top: 5%;">
-        <div class="tile is-5 is-vertical is-parent">
-            <div class="tile is-child">
-                <img src="img/friendsScreen.png" />
-            </div>
+    <div class="flex mt-[10%] flex-col xl:flex-row">
+        <div class="xl:pr-5 flex justify-center items-center mb-5">
+            <img src="img/friendsScreen.png" draggable="false" class="select-none w-4/5 xl:w-[130rem]" />
         </div>
 
-        <div class="tile is-parent" style="margin-left: 5%; display: flex; align-items: center; justify-content: center;">
-            <div class="tile is-child">
-                <p class="title" style="font-size: 4.5vw;"><b>Meet up with your <span class="friend-text">friends</span></b>.</p>
-                <p style="font-size: 2.5vw;"><b>You can partake in the same events with your friends, making them funnier and more engaging.</b> </p>
-                <p style="font-size: 2.5vw; background-color: #2989E1; color: white; display: inline-block; padding-left: 0.7%; padding-right: 0.7%; border-radius: 7px; margin-top: 7px;">You can even make new freinds, who knows! </p>
-            </div>
+        <div class="xl:pl-5 xl:pr-16 flex justify-center items-center flex-col">
+            <p class="font-inter text-[#001754] text-[4vw] font-semibold xl:mb-0 mb-3 ">Срещнете се с вашите <span class=" bg-gradient-to-r from-[#4FD8E0] to-[#4FB5E0] bg-clip-text" style="-webkit-text-fill-color: transparent; text-fill-color: transparent;">приятели.</span></p>
+            <p class="text-[#525252] text-[2.5vw] xl:text-justify xl:w-[100%] w-4/5 text-center">Можете да участвате в събитията с приятелите си, което ги прави още по-забавни и по-ангажиращи.</p>
+            <p class="text-[2.5vw] bg-[#2989E1] text-white d-inline-block pl-[0.7%] pr-[0.7%] rounded-[7px] mt-[7px]">
+                Можете дори да създадете нови приятели, кой знае!
+            </p>
         </div>
     </div>
 </section>
-
-<section class="hero is-halfheight">
-
-    <button class="start-now-button1">
-        Start now
-        <svg class="button-arrow-svg" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+<section class="flex items-center justify-center pt-20 pb-20">
+    <button class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#00A3FF] to-[#0038FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
+        Започни сега
+        <svg class="inline pl-[1vw] w-[2vw]" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
         </svg>
     </button>
-
 </section>
-
 <style>
-
-    /*!debug.css | MIT License | zaydek.github.com/debug.css */
-/**:not(path):not(g)
-{
-    color:                     hsla(210, 100%, 100%, 0.9) !important;
-    background:                hsla(210, 100%,  50%, 0.5) !important;
-    outline:     solid 0.25rem hsla(210, 100%, 100%, 0.5) !important;
-
-    box-shadow: none !important;
-}*/
-
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap');
-
-    /* General pushback for the heading container */
-    .heading-main {
-        margin-top: 5vh;
-    }
-
-    /* Nested styling for the h1 tag */
-    .heading-main > h1 {
-        width: 45vw;
-        color: #001854;
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 700;
-        font-size: 6em;
-    }
-
-    /* Styling & BG Clip for the gradient text */
-    .ai-text {
-        display: inline;
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        background-image: url('img/ai-gradient.png');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    .friend-text {
-        background: linear-gradient(87.12deg, #4FD8E0 33.23%, #4FB5E0 33.24%, #0057FF 96.36%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-    }
-
-    /* Call to action button */
-    .start-now-button {
-        height: 6vw;
-        width: 50%;
-        margin-top: 10%;
-        background: linear-gradient(92.45deg, #61B3FF -3.98%, #8321FF 112.43%);
-        border: none;
-        border-radius: 93px;
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 800;
-        font-size: 2.5vw;
-        color: #FFFFFF;
-    }
-
-    .start-now-button1 {
-        height: 40%;
-        width: 20%;
-        margin-left:40%;
-        margin-top: 10%;
-        background: linear-gradient(92.45deg, #00A3FF -3.98%, #0038FF 112.43%);
-        border: none;
-        border-radius: 93px;
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 800;
-        font-size: 3vw;
-        color: #FFFFFF;
-    }
-
-    /* Button icon */
-    .button-arrow-svg {
-        display: inline;
-        padding-left: 1vw;
-        width: 2vw;
-    }
-
-    /* Styling for the mockups */
-    .mockup-devices {
-        position: absolute;
-        margin-left: 7vw;
-        top: 10%;
-        z-index: 1;
-        width: 28%
-    }
-
 </style>

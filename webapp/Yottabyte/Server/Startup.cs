@@ -16,6 +16,7 @@ using Azure.Storage.Queues;
 using Azure.Storage.Blobs;
 using Azure.Core.Extensions;
 using System;
+using Tailwind;
 
 namespace Yottabyte.Server
 {
@@ -58,6 +59,14 @@ namespace Yottabyte.Server
                 };
             });
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                    builder.WithOrigins("http://localhost:19006", "https://localhost:19006", "http://mapit.studio", "https://mapit.studio", "http://www.mapit.studio", "https://www.mapit.studio", "https://ashy-cliff-062a3df03.2.azurestaticapps.net", "http://ashy-cliff-062a3df03.2.azurestaticapps.net")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddAzureClients(builder =>
@@ -74,6 +83,7 @@ namespace Yottabyte.Server
             {
                 app.UseDeveloperExceptionPage();
                 app.UseWebAssemblyDebugging();
+                app.RunTailwind("tailwind", "../Client/");
             }
             else
             {
@@ -85,6 +95,8 @@ namespace Yottabyte.Server
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
+
+            app.UseCors();
 
             app.UseRouting();
 

@@ -3,7 +3,7 @@
     "name": "Yottabyte",
     "slug": "Yottabyte",
     "icon": "assets/logo.png",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "assetBundlePatterns": [
       "**/*"
@@ -33,6 +33,11 @@
       "resizeMode": "cover",
       "backgroundColor": "#e9e9e9"
     },
-    "description": "Official Release v1.00"
+    "description": "Official Release v1.00",
+    "extra": {
+      "eas": {
+        "projectId": "b0324577-1aac-48e5-807c-af7c8d6d24d5"
+      }
+    }
   }
 }

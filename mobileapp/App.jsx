@@ -21,11 +21,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import RBSheet from "react-native-raw-bottom-sheet";
 import Confetti from "react-native-confetti";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearLogEntriesAsync } from "expo-updates";
 
 LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs();
 
-const SERVER_ENDPOINT = "//yottabyte-server-test.azurewebsites.net";
+const SERVER_ENDPOINT = "//yottabyte.azurewebsites.net";
 const API_ENDPOINT = SERVER_ENDPOINT + "/api";
 
 <StatusBar translucent backgroundColor="transparent" />;
@@ -73,7 +74,7 @@ function App() {
               <MaterialCommunityIcons
                 name="map-marker"
                 color={color}
-                size={55}
+                size={40}
               />
             ),
             headerShown: false,
@@ -88,7 +89,7 @@ function App() {
               <MaterialCommunityIcons
                 name="format-list-bulleted"
                 color={color}
-                size={55}
+                size={40}
               />
             ),
             headerShown: false,
@@ -103,7 +104,7 @@ function App() {
               <MaterialCommunityIcons
                 name="bell-outline"
                 color={color}
-                size={55}
+                size={40}
               />
             ),
             headerShown: false,
@@ -118,7 +119,7 @@ function App() {
               <MaterialCommunityIcons
                 name="face-recognition"
                 color={color}
-                size={50}
+                size={40}
               />
             ),
             headerShown: false,
@@ -140,7 +141,7 @@ function Map({ navigation }) {
   const [modalLocation, setModalLocation] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const [modalTime, setModalTime] = useState(null);
-  const [modalParticipate, setModalParticipate] = useState("I’m in!");
+  const [modalParticipate, setModalParticipate] = useState("Ще участвам!");
   let confettiView;
 
   useEffect(() => {
@@ -310,7 +311,7 @@ function Map({ navigation }) {
                   size={26}
                   style={styles.modalIconTime}
                 />
-                <Text style={styles.modalDate}>Award Presence</Text>
+                <Text style={styles.modalDate}>Награда</Text>
                 <Text style={styles.modalTime}>Built Different</Text>
                 <View
                   style={{
@@ -324,18 +325,18 @@ function Map({ navigation }) {
                   size={26}
                   style={styles.modalIconTime}
                 />
-                <Text style={styles.modalDate}>15 people are coming</Text>
-                <Text style={styles.modalTime}>4 friends</Text>
+                <Text style={styles.modalDate}>15 човека ще участват</Text>
+                <Text style={styles.modalTime}>4 приятеля</Text>
               </View>
               <TouchableOpacity
                 style={styles.modalButton}
                 onPress={() => {
                   if (confettiView) {
-                    if (modalParticipate != "Participating") {
-                      setModalParticipate("Participating");
+                    if (modalParticipate != "Участващ") {
+                      setModalParticipate("Участващ");
                       confettiView.startConfetti();
                     } else {
-                      setModalParticipate("I’m in!");
+                      setModalParticipate("Ще участвам!");
                     }
                   }
                 }}
@@ -364,7 +365,7 @@ function Events({ navigation }) {
   const [modalLocation, setModalLocation] = useState(null);
   const [modalDate, setModalDate] = useState(null);
   const [modalTime, setModalTime] = useState(null);
-  const [modalParticipate, setModalParticipate] = useState("I’m in!");
+  const [modalParticipate, setModalParticipate] = useState("Ще участвам!");
   let confettiView;
 
   useEffect(() => {
@@ -414,7 +415,7 @@ function Events({ navigation }) {
               setModalInfo(event);
             }}
           >
-            <Text style={styles.eventButtonText}>More Info</Text>
+            <Text style={styles.eventButtonText}>Виж още</Text>
           </TouchableOpacity>
         </View>
       );
@@ -502,7 +503,7 @@ function Events({ navigation }) {
                   size={26}
                   style={styles.modalIconTime}
                 />
-                <Text style={styles.modalDate}>Award Presence</Text>
+                <Text style={styles.modalDate}>Награда</Text>
                 <Text style={styles.modalTime}>Built Different</Text>
                 <View
                   style={{
@@ -516,18 +517,18 @@ function Events({ navigation }) {
                   size={26}
                   style={styles.modalIconTime}
                 />
-                <Text style={styles.modalDate}>15 people are coming</Text>
-                <Text style={styles.modalTime}>4 friends</Text>
+                <Text style={styles.modalDate}>15 човека ще участват</Text>
+                <Text style={styles.modalTime}>4 приятеля</Text>
               </View>
               <TouchableOpacity
                 style={styles.modalButton}
                 onPress={() => {
                   if (confettiView) {
-                    if (modalParticipate != "Participating") {
-                      setModalParticipate("Participating");
+                    if (modalParticipate != "Участващ") {
+                      setModalParticipate("Участващ");
                       confettiView.startConfetti();
                     } else {
-                      setModalParticipate("I’m in!");
+                      setModalParticipate("Ще участвам!");
                     }
                   }
                 }}
@@ -551,7 +552,7 @@ function Events({ navigation }) {
 function Notification() {
   return (
     <>
-      <Text style={styles.notification}>No notifications yet</Text>
+      <Text style={styles.notification}>Няма известия</Text>
     </>
   );
 }
@@ -559,7 +560,7 @@ function Notification() {
 function User() {
   return (
     <>
-      <Text style={styles.notification}>Coming soon</Text>
+      <Text style={styles.notification}>Очаквайте скоро!</Text>
     </>
   );
 }
@@ -652,17 +653,20 @@ const styles = StyleSheet.create({
 
   eventIconLocation: {
     position: "absolute",
-    top: 76,
+    top: 68,
     left: "42%",
   },
 
   eventIconTime: {
     position: "absolute",
-    top: 102,
+    top: 90,
     left: "42%",
   },
 
   eventButton: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     height: 41,
     width: "47%",
     borderRadius: 45,
@@ -673,8 +677,6 @@ const styles = StyleSheet.create({
 
   eventButtonText: {
     fontSize: 16,
-    top: 8,
-    left: "25%",
     color: "white",
     fontWeight: "bold",
   },
@@ -724,6 +726,9 @@ const styles = StyleSheet.create({
   },
 
   modalButton: {
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center",
     height: 79,
     width: "82%",
     borderRadius: 45,
@@ -743,8 +748,6 @@ const styles = StyleSheet.create({
 
   modalButtonText: {
     fontSize: 28,
-    top: 16,
-    textAlign: "center",
     color: "white",
     fontWeight: "bold",
   },

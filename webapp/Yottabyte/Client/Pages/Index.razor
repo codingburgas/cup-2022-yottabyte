@@ -1,10 +1,13 @@
 ﻿@page "/"
 
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
 <section class="h-screen xl:bg-[url('../img/side-gradient.png')] bg-no-repeat bg-right flex justify-center xl:justify-start flex-row flex-wrap">
     <div class="flex xl:ml-[5%] place-self-end xl:place-self-auto">
         <div class="xl:mt-[5vh] flex flex-col justify-center items-center xl:items-start">
             <h1 class="w-[90%] xl:w-[45vw] text-[#001854] font-inter not-italic font-bold text-[3rem] md:text-[4rem] xl:text-[5.5rem] leading-[3.3rem] md:leading-[5rem] select-none text-center xl:text-start">Спасете бъдещето чрез силата на <span class="inline bg-clip-text text-transparent bg-center bg-cover bg-[url('../img/ai-gradient.png')]">Изкуствения Интелект</span>.</h1>
-            <button class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#61B3FF] to-[#8321FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
+            <button @onclick="DownloadFileFromURL" class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#61B3FF] to-[#8321FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
             Започни сега
                 <svg class="inline pl-[1vw] w-[2vw]" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
@@ -76,7 +79,7 @@
     </div>
 </section>
 <section class="flex items-center justify-center pt-20 pb-20">
-    <button class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#00A3FF] to-[#0038FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
+    <button @onclick="DownloadFileFromURL" class="xl:h-[6vw] w-1/2 mt-[10%] bg-gradient-to-r from-[#00A3FF] to-[#0038FF] rounded-[93px] font-inter not-italic font-extrabold text-[4.5vw] xl:text-[2.5vw] text-[#FFFFFF]">
         Започни сега
         <svg class="inline pl-[1vw] w-[2vw]" width="30" height="45" viewBox="0 0 30 45" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0.395597 40.0789C0.182112 39.8812 0.181929 39.5436 0.395198 39.3456L18.1477 22.8665C18.3609 22.6686 18.3609 22.3314 18.1477 22.1335L0.395198 5.65435C0.181929 5.45638 0.182112 5.11882 0.395596 4.92108L5.36873 0.31471C5.56044 0.137139 5.85656 0.137138 6.04827 0.31471L29.604 22.1332C29.8176 22.3311 29.8176 22.6689 29.604 22.8668L6.04827 44.6853C5.85656 44.8629 5.56044 44.8629 5.36873 44.6853L0.395597 40.0789Z" fill="white" />
@@ -87,3 +90,12 @@
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap');
 </style>
+
+@code {
+    private async Task DownloadFileFromURL()
+    {
+        var fileName = "app.apk";
+        var fileURL = $"{NavManager.BaseUri}files/app.apk";
+        await JS.InvokeVoidAsync("triggerFileDownload", fileName, fileURL);
+    }
+}

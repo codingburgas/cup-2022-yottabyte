@@ -17,6 +17,7 @@ using Azure.Storage.Blobs;
 using Azure.Core.Extensions;
 using System;
 using Tailwind;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Yottabyte.Server
 {
@@ -94,7 +95,13 @@ namespace Yottabyte.Server
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles();
+            FileExtensionContentTypeProvider contentTypes = new FileExtensionContentTypeProvider();
+            contentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = contentTypes
+            });
 
             app.UseCors();
 

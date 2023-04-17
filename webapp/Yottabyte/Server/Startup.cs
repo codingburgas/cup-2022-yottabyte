@@ -1,146 +1,153 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
-using Yottabyte.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Azure;
-using Azure.Storage.Queues;
-using Azure.Storage.Blobs;
-using Azure.Core.Extensions;
-using System;
 using Tailwind;
 using Microsoft.AspNetCore.StaticFiles;
+using Yottabyte.Server.Helpers;
+using Microsoft.AspNetCore.Identity;
+using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.AzureAppServices;
+using Yottabyte.Data;
+using Yottabyte.Data.Models.Auth;
+using Yottabyte.Services;
 
-namespace Yottabyte.Server
+namespace Yottabyte.Server;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration) => Configuration = configuration;
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        // Entity Framework
+        services.AddDbContext<ApplicationDbContext>(options =>
+           options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")!, o =>
+           {
+               o.MigrationsAssembly("Yottabyte.Server");
+               o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+           }));
 
-        public IConfiguration Configuration { get; }
+        // For Identity
+        services
+            .AddIdentity<User, IdentityRole>(options =>
+            {
+                /*options.SignIn.RequireConfirmedEmail = true;*/
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-            );
+        services
+            .AddLogging(conf =>
+            {
+                conf.ClearProviders();
 
-            services.AddAuthentication(options =>
+                // conf.AddSeq(configuration.GetSection("Seq"));
+                conf.AddAzureWebAppDiagnostics();
+                conf.AddConsole();
+            })
+            .Configure<AzureFileLoggerOptions>(options =>
+            {
+                options.FileName = "first-azure-log";
+                options.FileSizeLimit = 50 * 1024;
+                options.RetainedFileCountLimit = 10;
+            });
+
+        services
+            .AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
             {
-                var key = Encoding.UTF8.GetBytes(Configuration["JWT:Key"]);
                 options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["JWT:Issuer"],
-                    ValidAudience = Configuration["JWT:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateLifetime = true,
-
-                    //Remove in production
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]!)),
                 };
             });
 
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                    builder.WithOrigins("http://localhost:19006", "https://localhost:19006", "http://mapit.studio", "https://mapit.studio", "http://www.mapit.studio", "https://www.mapit.studio", "https://ashy-cliff-062a3df03.2.azurestaticapps.net", "http://ashy-cliff-062a3df03.2.azurestaticapps.net")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-            });
-
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(Configuration["AzureStorage:ConnectionString:blob"], preferMsi: true);
-                builder.AddQueueServiceClient(Configuration["AzureStorage:ConnectionString:queue"], preferMsi: true);
-            });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        services.AddCors(options =>
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseWebAssemblyDebugging();
-                app.RunTailwind("tailwind", "../Client/");
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            options.AddDefaultPolicy(builder =>
+                builder.WithOrigins("http://localhost:19006", "https://localhost:19006", "http://mapit.studio", "https://mapit.studio", "http://www.mapit.studio", "https://www.mapit.studio", "https://ashy-cliff-062a3df03.2.azurestaticapps.net", "http://ashy-cliff-062a3df03.2.azurestaticapps.net")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+        });
 
-            app.UseHttpsRedirection();
-            app.UseBlazorFrameworkFiles();
-            FileExtensionContentTypeProvider contentTypes = new FileExtensionContentTypeProvider();
-            contentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
+        services.AddServices();
+        services.AddSwagger();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                ContentTypeProvider = contentTypes
-            });
+        services.AddAutoMapper(typeof(MappingProfile));
 
-            app.UseCors();
 
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("index.html");
-            });
-        }
+        services.AddControllersWithViews();
+        services.AddRazorPages();
+        services.AddAzureClients(builder =>
+        {
+            builder.AddBlobServiceClient(Configuration["AzureStorage:ConnectionString:blob"], preferMsi: true);
+            builder.AddQueueServiceClient(Configuration["AzureStorage:ConnectionString:queue"], preferMsi: true);
+        });
     }
-    internal static class StartupExtensions
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        public static IAzureClientBuilder<BlobServiceClient, BlobClientOptions> AddBlobServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
+        app.UseSwagger();
+        
+        if (env.IsDevelopment())
         {
-            if (preferMsi && Uri.TryCreate(serviceUriOrConnectionString, UriKind.Absolute, out Uri serviceUri))
-            {
-                return builder.AddBlobServiceClient(serviceUri);
-            }
-            else
-            {
-                return builder.AddBlobServiceClient(serviceUriOrConnectionString);
-            }
+            app.UseDeveloperExceptionPage();
+            app.UseWebAssemblyDebugging();
+            app.RunTailwind("tailwind", "../Client/");
+            app.UseSwaggerUI();
         }
-        public static IAzureClientBuilder<QueueServiceClient, QueueClientOptions> AddQueueServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
+        else
         {
-            if (preferMsi && Uri.TryCreate(serviceUriOrConnectionString, UriKind.Absolute, out Uri serviceUri))
-            {
-                return builder.AddQueueServiceClient(serviceUri);
-            }
-            else
-            {
-                return builder.AddQueueServiceClient(serviceUriOrConnectionString);
-            }
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
         }
+
+        app.UseHttpsRedirection();
+        app.UseBlazorFrameworkFiles();
+        var contentTypes = new FileExtensionContentTypeProvider();
+        contentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            ContentTypeProvider = contentTypes
+        });
+
+        app.UseCors();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapRazorPages();
+            endpoints.MapControllers();
+            endpoints.MapFallbackToFile("index.html");
+        });
     }
 }

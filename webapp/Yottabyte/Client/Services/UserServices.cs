@@ -1,4 +1,4 @@
-﻿using Yottabyte.Shared;
+﻿using Yottabyte.Shared.Models.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Text.Json;
 using System.Net.Http.Headers;
 using System.IO;
+using Yottabyte.Shared.Models;
 
 namespace Yottabyte.Client.Services
 {
@@ -40,15 +41,14 @@ namespace Yottabyte.Client.Services
         {
             var formContent = new MultipartFormDataContent
             {
-                { new StringContent(user.FName), "\"FName\"" },
-                { new StringContent(user.LName), "\"LName\"" },
+                { new StringContent(user.FirstName), "\"FName\"" },
+                { new StringContent(user.LastName), "\"LName\"" },
                 { new StringContent(user.Email), "\"Email\"" },
                 { new StringContent(user.Password), "\"Password\"" },
             };
 
             if (avatarStream != null)
-            {
-                Console.WriteLine("Qsha4");
+            {;
                 formContent.Add(new StreamContent(avatarStream, (int)avatarStream.Length), "\"Avatar\"", filename);
             }
 
@@ -65,7 +65,7 @@ namespace Yottabyte.Client.Services
             res = await result.Content.ReadFromJsonAsync<Response>();
 
             OnChange.Invoke();
-            return res.Data;
+            return res.Status;
         }
     }
 }

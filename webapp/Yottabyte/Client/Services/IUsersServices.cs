@@ -1,7 +1,5 @@
-﻿using Yottabyte.Shared;
+﻿using Yottabyte.Shared.Models.Auth;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 
@@ -24,6 +22,6 @@ namespace Yottabyte.Client.Services
         /// <param name="avatarStream">The image as file stream</param>
         /// <param name="filename">Name of the image</param>
         /// <returns>Was register success?</returns>
-        Task<String> CreateUser(UserIM user, Stream avatarStream, string filename);
+        Task<string> CreateUser(UserIM user, Stream avatarStream, string filename);
     }
 }

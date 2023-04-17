@@ -1,5 +1,6 @@
 ﻿@using Tewr.Blazor.FileReader
 @using System.IO
+@using Yottabyte.Shared.Models.Auth;
 
 @inject IUsersServices UserServices
 @inject IJSRuntime js
@@ -18,13 +19,13 @@
                         <div class="field-body" style="margin-top: 10%;">
                             <div class="field">
                                 <p class="control">
-                                    <InputText @bind-Value="User.FName" type="text" placeholder="Първо име" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
+                                    <InputText @bind-Value="User.FirstName" type="text" placeholder="Първо име" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
 
                                 </p>
                             </div>
                             <div class="field">
                                 <p class="control">
-                                    <InputText @bind-Value="User.LName" type="text" placeholder="Последно име" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
+                                    <InputText @bind-Value="User.LastName" type="text" placeholder="Последно име" class="form-control" required pattern="^(?=.*[A-ZAa-z])([A-Z])([a-z]{2,29})$"></InputText>
 
                                 </p>
                             </div>
@@ -75,7 +76,7 @@
         @code {
             ElementReference inputReference;
             public string recordSet = "";
-            public Yottabyte.Shared.UserIM User { get; set; } = new Yottabyte.Shared.UserIM();
+            public UserIM User { get; set; } = new UserIM();
             public Stream avatarImg = null;
 
             protected override async Task OnInitializedAsync()

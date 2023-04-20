@@ -72,20 +72,36 @@ class _MapPageState extends State<MapPage>  {
     super.initState();
   }
 
-  void addMarker(MapboxMapController controller, LatLng latLng) async {
-    var byteData = await rootBundle.load("images/poi.png");
-    var markerImage = byteData.buffer.asUint8List();
+  void _addMarker(LatLng latLng) async {
+    //var byteData = await rootBundle.load("images/poi.png");
+    //var markerImage = byteData.buffer.asUint8List();
+    controller?.addCircle(CircleOptions(
+      geometry: latLng,
+      circleRadius: 10,
+      circleColor: "#FF0000",
+      circleOpacity: 0.5,
+      circleStrokeWidth: 2,
+      circleStrokeColor: "#FF0000",
+    ));
 
-    controller.addImage('marker', markerImage);
+    if (latlngList.isNotEmpty) {
+       controller?.addLine(LineOptions(
+        geometry: [latlngList.last, latLng],
+        lineColor: "#FF0000",
+        lineWidth: 2,
+        lineOpacity: 0.5,
+      ));
+    }
 
-    await controller.addSymbol(
-      SymbolOptions(
-        iconSize: 0.3,
-        iconImage: "marker",
-        geometry: latLng,
-        iconAnchor: "bottom",
-      ),
-    );
+    setState(() {
+      latlngList.add(latLng);
+    });
+  }
+
+  void _addController(MapboxMapController controller) {
+    setState(() {
+      this.controller = controller;
+    });
   }
   
   @override
@@ -102,8 +118,8 @@ class _MapPageState extends State<MapPage>  {
           ),
           myLocationEnabled: true,
           myLocationTrackingMode: MyLocationTrackingMode.Tracking,
-          //onMapClick: (point, coordinates) => addController(controller),
-          //onMapCreated: (controller) => addMarker(controller, ),
+          onMapClick: (point, coordinates) => _addMarker(coordinates),
+          onMapCreated: (controller) => _addController(controller),
           accessToken: ACCESS_TOKEN,
           styleString: "mapbox://styles/ssivanov19/clgmedn2e00b601qqhspmh51o"
         ),
